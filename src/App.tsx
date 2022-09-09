@@ -1,10 +1,16 @@
-import React from "react";
-import { Button, ConfigProvider } from "antd";
+import { ConfigProvider } from "antd";
+import { Provider } from "react-redux";
+import store from "@/store";
+import Router from "./router";
+import './App.less';
 
 function App() {
   return (
-    <ConfigProvider prefixCls="ad" iconPrefixCls="ad">
-    </ConfigProvider>
+    <Provider store={store}>
+      <ConfigProvider prefixCls="ad" iconPrefixCls="ad">
+        <Router />
+      </ConfigProvider>
+    </Provider>
   );
 }
 

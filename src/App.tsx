@@ -7,7 +7,7 @@ import './App.less';
 function App() {
   return (
     <Provider store={store}>
-      <ConfigProvider prefixCls="ad" iconPrefixCls="ad">
+      <ConfigProvider prefixCls="admin" iconPrefixCls="admin">
         <Router />
       </ConfigProvider>
     </Provider>

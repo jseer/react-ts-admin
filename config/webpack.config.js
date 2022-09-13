@@ -190,8 +190,8 @@ module.exports = function (webpackEnv) {
               lessOptions: {
                 modifyVars: {
                   'primary-color': '#3e4491',
-                  'iconfont-css-prefix': 'ad',
-                  'ant-prefix': 'ad',
+                  'iconfont-css-prefix': 'adminicon',
+                  'ant-prefix': 'admin',
                 },
                 javascriptEnabled: true,
               },

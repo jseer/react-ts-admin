@@ -2,10 +2,12 @@ import { getItem } from 'src/utils/common';
 import { configureStore } from '@reduxjs/toolkit';
 import globalSlice from './global';
 import { createLogger } from 'redux-logger';
+import userSlice from './user';
 
 const store = configureStore({
   reducer: {
     [globalSlice.name]: globalSlice.reducer,
+    [userSlice.name]: userSlice.reducer,
   },
   middleware: (getDefaultMiddleware) => {
     let middleware = getDefaultMiddleware({

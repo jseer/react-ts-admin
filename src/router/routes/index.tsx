@@ -6,6 +6,7 @@ import NoFoundPage from "@/pages/404";
 import User from "@/pages/AuthManage/User";
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
+import Role from '@/pages/AuthManage/Role';
 
 const routes: RouteObject[] = [
   {
@@ -30,6 +31,10 @@ const routes: RouteObject[] = [
           {
             path: "/authManage/user",
             element: <User />,
+          },
+          {
+            path: "/authManage/role",
+            element: <Role />,
           },
         ],
       },

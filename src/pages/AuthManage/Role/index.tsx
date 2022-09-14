@@ -10,34 +10,29 @@ import {
   FormProps,
   Table,
   message,
-  Tooltip,
 } from 'antd';
 import { useAppDispatch, useAppSelector } from '@/hooks/store';
-import { IUserInfo, userPageThunk } from '@/store/user';
 import EditModal from './EditModal';
 import { formItemLayout, initPageInfo } from '@/utils/common';
-import { removeByIds } from '@/api/user';
-import { getRoleList } from '@/api/role';
-import { IRoleInfo } from '@/store/role';
-import SelectRole from './SelectRole';
+import { IRoleInfo, rolePageThunk } from '@/store/role';
+import { removeByIds } from '@/api/role';
 
 export type IModalType = 'create' | 'edit' | 'view';
-const UserList: React.FC = () => {
+const RoleList: React.FC = () => {
   const [form] = Form.useForm();
   const dispatch = useAppDispatch();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState<IModalType>('create');
-  const [modalData, setModalData] = useState<IUserInfo | null>(null);
-  const [roleList, setRoleList] = useState<IRoleInfo[]>([]);
+  const [modalData, setModalData] = useState<IRoleInfo | null>(null);
   const { list, listLoading } = useAppSelector((state) => {
-    const { userList, listLoading } = state.user;
+    const { roleList, listLoading } = state.role;
     return {
-      list: userList,
+      list: roleList,
       listLoading,
     };
   });
-  const showModal = (type: IModalType, data: IUserInfo | null) => {
+  const showModal = (type: IModalType, data: IRoleInfo | null) => {
     setIsModalOpen(true);
     setModalType(type);
     setModalData(data);
@@ -52,23 +47,20 @@ const UserList: React.FC = () => {
   const [pageInfo, setPageInfo] = useState(initPageInfo);
   const [total, setTotal] = useState(0);
   const onFinish: FormProps['onFinish'] = () => {
-    getUserPage();
+    getRolePage();
   };
 
-  const getUserPage = async () => {
-    const formValues = form.getFieldsValue();
-    const roles = formValues.roles?.join(',');
+  const getRolePage = async () => {
     const data = await dispatch(
-      userPageThunk({
+      rolePageThunk({
         ...form.getFieldsValue(),
-        roles,
         ...pageInfo,
       })
     ).unwrap();
     setTotal(data.total);
   };
   useEffect(() => {
-    getUserPage();
+    getRolePage();
   }, [pageInfo]);
 
   const columns = [
@@ -83,28 +75,14 @@ const UserList: React.FC = () => {
       key: 'name',
     },
     {
-      title: '角色',
-      dataIndex: 'roles',
-      key: 'roles',
-      ellipsis: true,
-      render: (_: any, record: IUserInfo) => {
-        const roleStr = record.roles?.map((item) => item.code).join(',');
-        return roleStr ? (
-          <Tooltip title={roleStr}>
-            <span>{roleStr}</span>
-          </Tooltip>
-        ) : null;
-      },
-    },
-    {
-      title: '邮箱',
-      dataIndex: 'email',
-      key: 'email',
+      title: '编码',
+      dataIndex: 'code',
+      key: 'code',
     },
     {
       title: '操作',
       key: 'operator',
-      render: (_: any, record: IUserInfo) => {
+      render: (_: any, record: IRoleInfo) => {
         return (
           <Space>
             <Button
@@ -129,34 +107,23 @@ const UserList: React.FC = () => {
     },
   ];
 
-  const removeUsers = async () => {
+  const removeRoles = async () => {
     await removeByIds({ ids: selectedRowKeys });
     message.success('删除成功');
-    getUserPage();
+    getRolePage();
   };
-
-  useEffect(() => {
-    getRoleList().then((data) => {
-      setRoleList(data);
-    });
-  }, []);
   return (
     <div>
       <Card bordered={false} style={{ marginBottom: 20 }}>
         <Form form={form} {...formItemLayout} onFinish={onFinish}>
           <Row>
             <Col span={6}>
-              <Form.Item label='角色' name='roles'>
-                <SelectRole roleList={roleList} />
-              </Form.Item>
-            </Col>
-            <Col span={6}>
-              <Form.Item label='账号' name='name'>
+              <Form.Item label='名称' name='name'>
                 <Input />
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item label='邮箱' name='email'>
+              <Form.Item label='code' name='code'>
                 <Input />
               </Form.Item>
             </Col>
@@ -189,7 +156,7 @@ const UserList: React.FC = () => {
             >
               添加
             </Button>
-            <Button type='primary' danger onClick={removeUsers}>
+            <Button type='primary' danger onClick={removeRoles}>
               删除
             </Button>
           </Space>
@@ -223,7 +190,6 @@ const UserList: React.FC = () => {
         handleCancel={() => {
           hideModal();
         }}
-        roleList={roleList}
         handleOk={() => {
           if (modalType === 'create') {
             message.success('更新成功');
@@ -233,7 +199,7 @@ const UserList: React.FC = () => {
             });
           } else if (modalType === 'edit') {
             message.success('更新成功');
-            getUserPage();
+            getRolePage();
           }
           hideModal();
         }}
@@ -244,4 +210,4 @@ const UserList: React.FC = () => {
   );
 };
 
-export default UserList;
+export default RoleList;

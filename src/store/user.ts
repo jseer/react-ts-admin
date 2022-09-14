@@ -1,3 +1,4 @@
+import { IRoleInfo } from './role';
 import { userCreate, userPage } from '@/api/user';
 import { IPagination } from '@/utils/typing';
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
@@ -35,10 +36,11 @@ const userSlice = createSlice({
 });
 
 export interface IUserInfo {
-  nickname: string;
+  name: string;
   email: string;
   password: string;
   gender: 1 | 2;
+  roles?: IRoleInfo[],
 }
 export const userCreateThunk = createAsyncThunk(
   'user/create',
@@ -49,7 +51,7 @@ export const userCreateThunk = createAsyncThunk(
 );
 
 export interface IUserParams {
-  username?: string;
+  name?: string;
   email?: string;
   role?: string;
 }

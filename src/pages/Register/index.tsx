@@ -24,7 +24,7 @@ const Register: React.FC = () => {
   const navigate = useNavigate();
   const onFinish: FormProps["onFinish"] = async (values) => {
     await dispatch(userCreateThunk(values)).unwrap();
-    navigate('/login?username='+ values.username);
+    navigate('/login?name='+ values.name);
   };
 
   return (
@@ -39,7 +39,7 @@ const Register: React.FC = () => {
         className={styles.form}
       >
         <Form.Item
-          name="username"
+          name="name"
           label="账号"
           rules={[{ required: true, message: "请输入账号", whitespace: true }]}
         >

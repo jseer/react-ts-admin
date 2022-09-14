@@ -3,11 +3,13 @@ import { configureStore } from '@reduxjs/toolkit';
 import globalSlice from './global';
 import { createLogger } from 'redux-logger';
 import userSlice from './user';
+import roleSlice from './role';
 
 const store = configureStore({
   reducer: {
     [globalSlice.name]: globalSlice.reducer,
     [userSlice.name]: userSlice.reducer,
+    [roleSlice.name]: roleSlice.reducer,
   },
   middleware: (getDefaultMiddleware) => {
     let middleware = getDefaultMiddleware({

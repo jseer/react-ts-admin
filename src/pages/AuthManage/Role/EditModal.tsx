@@ -1,6 +1,5 @@
-import { userCreate, userUpdate } from '@/api/user';
+import { updateRole, createRole } from '@/api/role';
 import { IRoleInfo } from '@/store/role';
-import { IUserInfo } from '@/store/user';
 import { formItemLayout } from '@/utils/common';
 import {
   Modal,
@@ -15,34 +14,29 @@ import {
 } from 'antd';
 import { useEffect } from 'react';
 import { IModalType } from '.';
-import SelectRole from './SelectRole';
 
 interface IEditModalProps {
   isModalOpen: boolean;
   handleOk: () => void;
   handleCancel: () => void;
   type: IModalType;
-  data: IUserInfo | null;
-  roleList: IRoleInfo[];
+  data: IRoleInfo | null;
 }
 const EditModal: React.FC<IEditModalProps> = (props) => {
-  const { isModalOpen, handleOk, handleCancel, type, data, roleList } = props;
+  const { isModalOpen, handleOk, handleCancel, type, data } = props;
   const [form] = Form.useForm();
   const onFinish: FormProps['onFinish'] = async (values) => {
     if(type === 'create') {
-      await userCreate(values);
+      await createRole(values);
     } else if(type === 'edit') {
-      await userUpdate(values);
+      await updateRole(values);
     }
     handleOk();
   };
 
   useEffect(() => {
     if (isModalOpen && data) {
-      form.setFieldsValue({
-        ...data,
-        roles: data.roles?.map((item) => item.code),
-      });
+      form.setFieldsValue(data);
     }
   }, [isModalOpen, data]);
   const isView = type === 'view';
@@ -77,50 +71,16 @@ const EditModal: React.FC<IEditModalProps> = (props) => {
         <Form.Item
           label='账号'
           name='name'
-          rules={[{ required: true, message: '请输入用户名' }]}
+          rules={[{ required: true, message: '请输入角色名称' }]}
         >
           <Input />
         </Form.Item>
         <Form.Item
-          label='邮箱'
-          name='email'
-          rules={[
-            {
-              type: 'email',
-              message: '请输入正确的邮箱',
-            },
-            {
-              required: true,
-              message: '请输入邮箱',
-            },
-          ]}
+          label='code'
+          name='code'
+          rules={[{ required: true, message: '请输入角色code' }]}
         >
           <Input />
-        </Form.Item>
-        {/* <Form.Item
-          name='password'
-          label='密码'
-          rules={[
-            {
-              required: true,
-              message: '请输入密码',
-            },
-          ]}
-        >
-          <Input.Password placeholder='请输入密码' />
-        </Form.Item> */}
-        <Form.Item
-          name='gender'
-          label='性别'
-          rules={[{ required: true, message: '请输入性别' }]}
-        >
-          <Radio.Group>
-            <Radio value={1}>男</Radio>
-            <Radio value={2}>女</Radio>
-          </Radio.Group>
-        </Form.Item>
-        <Form.Item label='角色' name='roles'>
-          <SelectRole roleList={roleList} />
         </Form.Item>
       </Form>
     </Modal>

@@ -18,7 +18,7 @@ const Login: React.FC = () => {
 
   useEffect(() => {
     form.setFieldsValue({
-      username: search.get('username'),
+      name: search.get('name'),
     });
   }, [form, search]);
   return (
@@ -32,7 +32,7 @@ const Login: React.FC = () => {
         onFinish={onFinish}
       >
         <Form.Item
-          name='username'
+          name='name'
           rules={[{ required: true, message: '请输入用户名' }]}
         >
           <Input

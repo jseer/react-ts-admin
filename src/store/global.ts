@@ -1,3 +1,5 @@
+import { getMenuList, IMenuInfo, IMenuListItem } from '@/api/menu';
+import { getAllDictionaries, IAllDictionaries } from '@/api/dictionaries';
 import { userLogin, userLogout, getCurrentUser } from '@/api/user';
 import { IUserInfo } from '@/store/user';
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
@@ -8,6 +10,8 @@ interface IInitialState {
   selectedKeys: string[];
   isLogin: boolean;
   userInfo: IUserInfo | null;
+  allDicItems: IAllDictionaries;
+  menuList: IMenuListItem[];
 }
 const initialState: IInitialState = {
   collapsed: false,
@@ -15,6 +19,8 @@ const initialState: IInitialState = {
   selectedKeys: [],
   isLogin: false,
   userInfo: null,
+  allDicItems: {},
+  menuList: [],
 };
 
 const globalSlice = createSlice({
@@ -52,6 +58,10 @@ const globalSlice = createSlice({
       state.userInfo = null;
     }).addCase(getUserInfo.fulfilled, (state, { payload }) => {
       state.userInfo = payload;
+    }).addCase(getAllDictionariesThunk.fulfilled, (state, { payload }) => {
+      state.allDicItems = payload;
+    }).addCase(getMenuListThunk.fulfilled, (state, { payload }) => {
+      state.menuList = payload;
     })
   },
 });
@@ -84,5 +94,22 @@ export const getUserInfo = createAsyncThunk(
   }
 );
 
+export const getAllDictionariesThunk = createAsyncThunk(
+  'global/getAllDictionaries',
+  async () => {
+    const data = await getAllDictionaries();
+    return data;
+  }
+);
+
+export const getMenuListThunk = createAsyncThunk(
+  'global/getMenuList',
+  async () => {
+    const data = await getMenuList();
+    return data;
+  }
+);
+
 export const globalActions = globalSlice.actions;
 export default globalSlice;
+

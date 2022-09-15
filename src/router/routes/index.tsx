@@ -7,6 +7,8 @@ import User from "@/pages/AuthManage/User";
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
 import Role from '@/pages/AuthManage/Role';
+import Menu from '@/pages/AuthManage/Menu';
+import Dictionaries from '@/pages/BaseData/Dictionaries';
 
 const routes: RouteObject[] = [
   {
@@ -36,9 +38,21 @@ const routes: RouteObject[] = [
             path: "/authManage/role",
             element: <Role />,
           },
+          {
+            path: "/authManage/menu",
+            element: <Menu />,
+          },
         ],
       },
-
+      {
+        path: "/baseData",
+        children: [
+          {
+            path: "/baseData/dictionaries",
+            element: <Dictionaries />,
+          },
+        ],
+      },
       {
         path: "/",
         element: <Navigate to={"/overview"} />,

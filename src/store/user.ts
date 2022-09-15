@@ -39,7 +39,7 @@ export interface IUserInfo {
   name: string;
   email: string;
   password: string;
-  gender: 1 | 2;
+  gender: '1' | '2';
   roles?: IRoleInfo[],
 }
 export const userCreateThunk = createAsyncThunk(

@@ -5,7 +5,7 @@ export const createRole = async (data: IRoleInfo) => {
   return axios.post<IRoleInfo, IRoleInfo>('/api/role/create', data);
 };
 
-export const rolePage = async (params: IRolePage) => {
+export const rolePage = async (params?: any) => {
   return axios.get<IRolePage, IRolePage>('/api/role/page', {
     params,
   });

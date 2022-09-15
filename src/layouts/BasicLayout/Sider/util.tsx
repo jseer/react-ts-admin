@@ -3,14 +3,16 @@ import type { MenuProps } from "antd";
 import { pathToRegexp } from "path-to-regexp";
 import { toHump } from "@/utils/common";
 import { allIcons } from "@/utils/icons";
+import { IMenuListItem } from '@/api/menu';
 
 type MenuItem = Required<MenuProps>["items"][number];
 interface IMenuProps {
   parentkeys?: string[];
   children?: ICustomMenuItem[];
   icon?: React.ReactNode;
+  path?: string;
 }
-type ICustomMenuItem = MenuItem & IMenuProps;
+export type ICustomMenuItem = MenuItem & IMenuProps;
 const baseIcon = "smile";
 
 const getMenuMatches = (
@@ -19,9 +21,9 @@ const getMenuMatches = (
 ): ICustomMenuItem[] => {
   const matches: ICustomMenuItem[] = [];
   for (let menu of flatMenus) {
-    if (menu.key) {
+    if (menu.path) {
       try {
-        if (pathToRegexp(menu.key as string).test(path)) {
+        if (pathToRegexp(menu.path as string).test(path)) {
           matches.push(menu);
           continue;
         }
@@ -29,7 +31,7 @@ const getMenuMatches = (
         if (path.lastIndexOf("/") === path.length - 1) {
           path = path.slice(0, -1);
         }
-        if (pathToRegexp(`${menu.key}/(.*)`).test(path)) {
+        if (pathToRegexp(`${menu.path}/(.*)`).test(path)) {
           matches.push(menu);
           continue;
         }
@@ -40,15 +42,15 @@ const getMenuMatches = (
   }
 
   matches.sort((a, b) => {
-    if (a.key === path) {
+    if (a.path === path) {
       return 1;
     }
-    if (b.key === path) {
+    if (b.path === path) {
       return -1;
     }
     return (
-      (a.key as string)!.substr(1).split("/").length -
-      (b.key as string)!.substr(1).split("/").length
+      (a.path as string)!.substr(1).split("/").length -
+      (b.path as string)!.substr(1).split("/").length
     );
   });
 
@@ -99,7 +101,7 @@ const formatter = (menu: ICustomMenuItem, icon: string) => {
   }
 };
 
-const modifyMenuData = (
+export const modifyMenuData = (
   menuData: ICustomMenuItem[],
   parent?: ICustomMenuItem
 ) => {
@@ -120,29 +122,54 @@ const modifyMenuData = (
   });
 };
 
-export const menuData: ICustomMenuItem[] = [
-  {
-    label: "首页",
-    key: "/overview",
-  },
-  {
-    label: "权限管理",
-    key: "/authorityManage",
-    children: [
-      {
-        label: "用户列表",
-        key: "/authManage/user",
-      },
-      {
-        label: "角色列表",
-        key: "/authManage/role",
-      },
-      {
-        label: "菜单列表",
-        key: "/authManage/menu",
-      },
-    ],
-  },
-];
+export const transformMenuList = (menuList: IMenuListItem[], menuData: ICustomMenuItem[]) => {
+  menuList.forEach((menu) => {
+    const item: ICustomMenuItem= {
+      label: menu.name,
+      key: menu.code,
+      path: menu.path,
+    }
+    if (menu.children?.length) {
+      const arr: ICustomMenuItem[] = [];
+      item.children = transformMenuList(menu.children, arr);
+    }
+    menuData.push(item);
+  })
+  return menuData;
+}
+// export const menuData: ICustomMenuItem[] = [
+//   {
+//     label: "首页",
+//     key: "/overview",
+//   },
+//   {
+//     label: "权限管理",
+//     key: "/authorityManage",
+//     children: [
+//       {
+//         label: "用户列表",
+//         key: "/authManage/user",
+//       },
+//       {
+//         label: "角色列表",
+//         key: "/authManage/role",
+//       },
+//       {
+//         label: "菜单列表",
+//         key: "/authManage/menu",
+//       },
+//     ],
+//   },
+//   {
+//     label: "基础数据",
+//     key: "/baseData",
+//     children: [
+//       {
+//         label: "字典",
+//         key: "/baseData/dictionaries",
+//       },
+//     ],
+//   },
+// ];
 
-modifyMenuData(menuData);
+// modifyMenuData(menuData);

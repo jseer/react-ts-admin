@@ -1,3 +1,4 @@
+import { IDictionariesItem } from '@/api/dictionaries';
 export function getItem<T>(key: string, defaultValue: T): T;
 export function getItem<T>(key: string): T | undefined;
 export function getItem<T>(key: string, defaultValue?: T): T | undefined {
@@ -44,3 +45,13 @@ export const initPageInfo = {
   current: 1,
   pageSize: 10,
 }
+
+export const getDicItemLabel = (
+  dicItem: IDictionariesItem[],
+  value: string | number,
+) => {
+  if (dicItem) {
+    const item = dicItem.find((dic) => dic.value == value);
+    return item?.label;
+  }
+};

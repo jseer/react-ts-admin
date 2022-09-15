@@ -29,26 +29,33 @@ const EditModal: React.FC<IEditModalProps> = (props) => {
   const { isModalOpen, handleOk, handleCancel, type, data, roleList } = props;
   const [form] = Form.useForm();
   const onFinish: FormProps['onFinish'] = async (values) => {
-    if(type === 'create') {
+    if (type === 'create') {
       await userCreate(values);
-    } else if(type === 'edit') {
+    } else if (type === 'edit') {
       await userUpdate(values);
     }
     handleOk();
   };
 
+  const isView = type === 'view';
+  const isEdit = type === 'edit';
+  const isCreate = type === 'create';
+
   useEffect(() => {
-    if (isModalOpen && data) {
-      form.setFieldsValue({
-        ...data,
-        roles: data.roles?.map((item) => item.code),
-      });
+    if (isModalOpen) {
+      if(isCreate || !data) {
+        form.resetFields();
+      } else if(data){
+        form.setFieldsValue({
+          ...data,
+          roles: data.roles?.map((role) => role.code),
+        });
+      }
     }
   }, [isModalOpen, data]);
-  const isView = type === 'view';
   return (
     <Modal
-      title='编辑'
+      title={isView ? '查看' : isEdit ? '编辑' : '创建'}
       open={isModalOpen}
       onOk={handleOk}
       onCancel={handleCancel}

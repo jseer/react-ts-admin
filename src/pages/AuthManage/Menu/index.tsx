@@ -10,37 +10,27 @@ import {
   FormProps,
   Table,
   message,
-  Tooltip,
+  TableColumnProps,
 } from 'antd';
-import { useAppDispatch, useAppSelector } from '@/hooks/store';
-import { IUserInfo, userPageThunk } from '@/store/user';
 import EditModal from './EditModal';
-import { formItemLayout, getDicItemLabel, initPageInfo } from '@/utils/common';
-import { removeByIds } from '@/api/user';
-import { getRoleList } from '@/api/role';
-import { IRoleInfo } from '@/store/role';
-import SelectRole from './SelectRole';
+import { formItemLayout, getDicItemLabel } from '@/utils/common';
+import { IMenuInfo, getMenuList, removeByIds } from '@/api/menu';
+import { useAppSelector } from '@/hooks/store';
 
 export type IModalType = 'create' | 'edit' | 'view';
-const UserList: React.FC = () => {
+const MenuList: React.FC = () => {
   const [form] = Form.useForm();
-  const dispatch = useAppDispatch();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState<IModalType>('create');
-  const [modalData, setModalData] = useState<IUserInfo | null>(null);
-  const [roleList, setRoleList] = useState<IRoleInfo[]>([]);
+  const [modalData, setModalData] = useState<IMenuInfo | null>(null);
+  const [list, setList] = useState<IMenuInfo[]>([]);
+  const [loading, setLoading] = useState(false);
   const { allDicItems } = useAppSelector((state) => ({
     allDicItems: state.global.allDicItems,
   }))
-  const { list, listLoading } = useAppSelector((state) => {
-    const { userList, listLoading } = state.user;
-    return {
-      list: userList,
-      listLoading,
-    };
-  });
-  const showModal = (type: IModalType, data: IUserInfo | null) => {
+
+  const showModal = (type: IModalType, data: IMenuInfo | null) => {
     setIsModalOpen(true);
     setModalType(type);
     setModalData(data);
@@ -52,27 +42,26 @@ const UserList: React.FC = () => {
     setModalData(null);
   };
 
-  const [pageInfo, setPageInfo] = useState(initPageInfo);
-  const [total, setTotal] = useState(0);
+ 
   const onFinish: FormProps['onFinish'] = () => {
-    getUserPage();
+    getmenuList();
   };
 
-  const getUserPage = async () => {
-    const formValues = form.getFieldsValue();
-    const roles = formValues.roles?.join(',');
-    const data = await dispatch(
-      userPageThunk({
+  const getmenuList = async () => {
+    try {
+      setLoading(true);
+      const data = await getMenuList({
         ...form.getFieldsValue(),
-        roles,
-        ...pageInfo,
-      })
-    ).unwrap();
-    setTotal(data.total);
+      });
+      setList(data);
+    } catch(e) {
+      console.log(e);
+    }
+    setLoading(false);
   };
   useEffect(() => {
-    getUserPage();
-  }, [pageInfo]);
+    getmenuList();
+  }, []);
 
   const columns = [
     {
@@ -81,41 +70,32 @@ const UserList: React.FC = () => {
       key: 'id',
     },
     {
-      title: '姓名',
+      title: '名称',
       dataIndex: 'name',
       key: 'name',
     },
     {
-      title: '角色',
-      dataIndex: 'roles',
-      key: 'roles',
-      ellipsis: true,
-      render: (_: any, record: IUserInfo) => {
-        const roleStr = record.roles?.map((item) => item.code).join(',');
-        return roleStr ? (
-          <Tooltip title={roleStr}>
-            <span>{roleStr}</span>
-          </Tooltip>
-        ) : null;
-      },
+      title: 'code',
+      dataIndex: 'code',
+      key: 'code',
     },
     {
-      title: '邮箱',
-      dataIndex: 'email',
-      key: 'email',
-    },
-    {
-      title: '性别',
-      dataIndex: 'gender',
-      key: 'gender',
+      title: '菜单类型',
+      dataIndex: 'type',
+      key: 'type',
       render: (text: string) => {
-        return getDicItemLabel(allDicItems.GENDER, text);
+        return getDicItemLabel(allDicItems.MENU_TYPE, text);
       }
+    },
+    {
+      title: '访问路径',
+      dataIndex: 'path',
+      key: 'path',
     },
     {
       title: '操作',
       key: 'operator',
-      render: (_: any, record: IUserInfo) => {
+      render: (_: any, record: IMenuInfo) => {
         return (
           <Space>
             <Button
@@ -134,40 +114,38 @@ const UserList: React.FC = () => {
             >
               查看
             </Button>
+            <Button
+              type='link'
+              onClick={() => {
+                showModal('create', record);
+              }}
+              hidden={record.type === '2'}
+            >
+              添加菜单
+            </Button>
           </Space>
         );
       },
     },
   ];
 
-  const removeUsers = async () => {
+  const removeRoles = async () => {
     await removeByIds({ ids: selectedRowKeys });
     message.success('删除成功');
-    getUserPage();
+    getmenuList();
   };
-
-  useEffect(() => {
-    getRoleList().then((data) => {
-      setRoleList(data);
-    });
-  }, []);
   return (
     <div>
       <Card bordered={false} style={{ marginBottom: 20 }}>
         <Form form={form} {...formItemLayout} onFinish={onFinish}>
           <Row>
             <Col span={6}>
-              <Form.Item label='角色' name='roles'>
-                <SelectRole roleList={roleList} />
-              </Form.Item>
-            </Col>
-            <Col span={6}>
-              <Form.Item label='账号' name='name'>
+              <Form.Item label='名称' name='name'>
                 <Input />
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item label='邮箱' name='email'>
+              <Form.Item label='code' name='code'>
                 <Input />
               </Form.Item>
             </Col>
@@ -179,7 +157,7 @@ const UserList: React.FC = () => {
                 <Button
                   onClick={() => {
                     form.resetFields();
-                    setPageInfo({ ...initPageInfo });
+                    getmenuList();
                   }}
                 >
                   重置
@@ -200,28 +178,18 @@ const UserList: React.FC = () => {
             >
               添加
             </Button>
-            <Button type='primary' danger onClick={removeUsers}>
+            <Button type='primary' danger onClick={removeRoles}>
               删除
             </Button>
           </Space>
         </div>
         <Table
-          loading={listLoading}
+          loading={loading}
           dataSource={list}
           columns={columns}
-          onChange={(pagination) => {
-            setPageInfo({
-              current: pagination.current || 1,
-              pageSize: pagination.pageSize || 10,
-            });
-          }}
-          pagination={{
-            pageSize: pageInfo.pageSize,
-            current: pageInfo.current,
-            total,
-          }}
           rowKey='id'
           rowSelection={{
+            checkStrictly: false,
             selectedRowKeys,
             onChange: (selectedRowKeys) => {
               setSelectedRowKeys(selectedRowKeys);
@@ -234,20 +202,8 @@ const UserList: React.FC = () => {
         handleCancel={() => {
           hideModal();
         }}
-        roleList={roleList}
-        handleOk={() => {
-          if (modalType === 'create') {
-            message.success('创建成功');
-            setPageInfo({
-              current: 1,
-              pageSize: pageInfo.pageSize,
-            });
-          } else if (modalType === 'edit') {
-            message.success('更新成功');
-            getUserPage();
-          }
-          hideModal();
-        }}
+        updateRefresh={getmenuList}
+        createRefresh={getmenuList}
         data={modalData}
         type={modalType}
       />
@@ -255,4 +211,4 @@ const UserList: React.FC = () => {
   );
 };
 
-export default UserList;
+export default MenuList;

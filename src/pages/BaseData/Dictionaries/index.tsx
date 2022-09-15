@@ -8,81 +8,97 @@ import {
   Button,
   Space,
   FormProps,
-  Table,
   message,
+  TableColumnProps,
 } from 'antd';
-import { useAppDispatch, useAppSelector } from '@/hooks/store';
-import EditModal from './EditModal';
+import DictionaryModal from './DictionaryModal';
 import { formItemLayout, initPageInfo } from '@/utils/common';
-import { IRoleInfo, rolePageThunk } from '@/store/role';
-import { removeByIds } from '@/api/role';
+import {
+  IDictionariesInfo,
+  dictionariesPage,
+  removeByIds,
+  IDictionariesItem,
+} from '@/api/dictionaries';
+import useModal from '@/hooks/useModal';
+import useTable from '@/hooks/useTable';
+import Table from '@/components/Table';
+import DictionaryItemModal from './DictionaryItemModal';
 
 export type IModalType = 'create' | 'edit' | 'view';
-const RoleList: React.FC = () => {
+const Dictionaries: React.FC = () => {
   const [form] = Form.useForm();
-  const dispatch = useAppDispatch();
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalType, setModalType] = useState<IModalType>('create');
-  const [modalData, setModalData] = useState<IRoleInfo | null>(null);
-  const { list, listLoading } = useAppSelector((state) => {
-    const { roleList, listLoading } = state.role;
-    return {
-      list: roleList,
-      listLoading,
-    };
-  });
-  const showModal = (type: IModalType, data: IRoleInfo | null) => {
-    setIsModalOpen(true);
-    setModalType(type);
-    setModalData(data);
-  };
+  const { isModalOpen, modalType, modalData, showModal, hideModal } =
+    useModal<IDictionariesInfo>();
+  const {
+    isModalOpen: isModalOpenItem,
+    modalType: modalTypeItem,
+    modalData: modalDataItem,
+    showModal: showItemModal,
+    hideModal: hideItemModal,
+  } = useModal<IDictionariesInfo>();
+  const {
+    selectedRowKeys,
+    setSelectedRowKeys,
+    total,
+    setTotal,
+    setLoading,
+    loading,
+    list,
+    setList,
+    pageInfo,
+    setPageInfo,
+  } = useTable<IDictionariesInfo>();
 
-  const hideModal = () => {
-    setIsModalOpen(false);
-    setModalType('create');
-    setModalData(null);
-  };
-
-  const [pageInfo, setPageInfo] = useState(initPageInfo);
-  const [total, setTotal] = useState(0);
   const onFinish: FormProps['onFinish'] = () => {
-    getRolePage();
+    getDictionariesPage();
   };
 
-  const getRolePage = async () => {
-    const data = await dispatch(
-      rolePageThunk({
+  const getDictionariesPage = async () => {
+    try {
+      setLoading(true);
+      const data = await dictionariesPage({
         ...form.getFieldsValue(),
         ...pageInfo,
-      })
-    ).unwrap();
-    setTotal(data.total);
+      });
+      setList(data.list);
+      setTotal(data.total);
+    } catch (e) {
+      console.log(e);
+    }
+    setLoading(false);
   };
   useEffect(() => {
-    getRolePage();
+    getDictionariesPage();
   }, [pageInfo]);
 
-  const columns = [
+  const columns: TableColumnProps<IDictionariesInfo>[] = [
     {
       title: 'ID',
       dataIndex: 'id',
       key: 'id',
     },
     {
-      title: '姓名',
+      title: '名称',
       dataIndex: 'name',
       key: 'name',
     },
     {
-      title: '编码',
+      title: 'code',
       dataIndex: 'code',
       key: 'code',
     },
     {
+      title: '数量',
+      dataIndex: 'items',
+      key: 'items',
+      render: (text: any[]) => {
+        return text?.length;
+      },
+    },
+    {
       title: '操作',
       key: 'operator',
-      render: (_: any, record: IRoleInfo) => {
+      render: (_: any, record: IDictionariesInfo) => {
         return (
           <Space>
             <Button
@@ -93,13 +109,21 @@ const RoleList: React.FC = () => {
             >
               编辑
             </Button>
-            <Button
+            {/* <Button
               type='link'
               onClick={() => {
                 showModal('view', record);
               }}
             >
               查看
+            </Button> */}
+            <Button
+              type='link'
+              onClick={() => {
+                showItemModal('edit', record);
+              }}
+            >
+              值
             </Button>
           </Space>
         );
@@ -110,7 +134,7 @@ const RoleList: React.FC = () => {
   const removeRoles = async () => {
     await removeByIds({ ids: selectedRowKeys });
     message.success('删除成功');
-    getRolePage();
+    getDictionariesPage();
   };
   return (
     <div>
@@ -161,53 +185,44 @@ const RoleList: React.FC = () => {
             </Button>
           </Space>
         </div>
-        <Table
-          loading={listLoading}
-          dataSource={list}
+        <Table<IDictionariesInfo>
+          loading={loading}
+          list={list}
           columns={columns}
-          onChange={(pagination) => {
-            setPageInfo({
-              current: pagination.current || 1,
-              pageSize: pagination.pageSize || 10,
-            });
-          }}
-          pagination={{
-            pageSize: pageInfo.pageSize,
-            current: pageInfo.current,
-            total,
-          }}
-          rowKey='id'
-          rowSelection={{
-            selectedRowKeys,
-            onChange: (selectedRowKeys) => {
-              setSelectedRowKeys(selectedRowKeys);
-            },
-          }}
+          pageInfo={pageInfo}
+          setPageInfo={setPageInfo}
+          total={total}
+          setSelectedRowKeys={setSelectedRowKeys}
+          selectedRowKeys={selectedRowKeys}
         />
       </Card>
-      <EditModal
+      <DictionaryModal
         isModalOpen={isModalOpen}
         handleCancel={() => {
           hideModal();
         }}
-        handleOk={() => {
-          if (modalType === 'create') {
-            message.success('创建成功');
-            setPageInfo({
-              current: 1,
-              pageSize: pageInfo.pageSize,
-            });
-          } else if (modalType === 'edit') {
-            message.success('更新成功');
-            getRolePage();
-          }
-          hideModal();
+        updateRefresh={getDictionariesPage}
+        createRefresh={() => {
+          setPageInfo({
+            current: 1,
+            pageSize: pageInfo.pageSize,
+          });
         }}
         data={modalData}
         type={modalType}
+      />
+
+      <DictionaryItemModal
+        isModalOpen={isModalOpenItem}
+        handleCancel={() => {
+          hideItemModal();
+        }}
+        updateRefresh={getDictionariesPage}
+        data={modalDataItem}
+        type={modalTypeItem}
       />
     </div>
   );
 };
 
-export default RoleList;
+export default Dictionaries;

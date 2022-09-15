@@ -1,5 +1,5 @@
-import { updateRole, createRole } from '@/api/role';
-import { IRoleInfo } from '@/store/role';
+import { updateMenu, createMenu, IMenuInfo} from '@/api/menu';
+import { useAppSelector } from '@/hooks/store';
 import { formItemLayout } from '@/utils/common';
 import {
   Modal,
@@ -9,29 +9,44 @@ import {
   Row,
   Space,
   Button,
+  message,
   Select,
   Radio,
 } from 'antd';
+import React from 'react';
 import { useEffect } from 'react';
 import { IModalType } from '.';
 
 interface IEditModalProps {
   isModalOpen: boolean;
-  handleOk: () => void;
   handleCancel: () => void;
   type: IModalType;
-  data: IRoleInfo | null;
+  data: IMenuInfo | null;
+  createRefresh: () => void;
+  updateRefresh: () => void;
 }
+
+const { Option } = Select;
 const EditModal: React.FC<IEditModalProps> = (props) => {
-  const { isModalOpen, handleOk, handleCancel, type, data } = props;
+  const { isModalOpen, handleCancel, type, data, createRefresh, updateRefresh} = props;
   const [form] = Form.useForm();
+  const { allDicItems } = useAppSelector((state) => ({
+    allDicItems: state.global.allDicItems,
+  }));
   const onFinish: FormProps['onFinish'] = async (values) => {
-    if (type === 'create') {
-      await createRole(values);
-    } else if (type === 'edit') {
-      await updateRole(values);
+    if(type === 'create') {
+      if(data?.id) {
+        values.parentId = data.id;
+      }
+      await createMenu(values);
+      message.success('创建成功');
+      createRefresh();
+    } else if(type === 'edit') {
+      await updateMenu(values);
+      message.success('更新成功');
+      updateRefresh();
     }
-    handleOk();
+    handleCancel();
   };
 
   const isView = type === 'view';
@@ -47,12 +62,10 @@ const EditModal: React.FC<IEditModalProps> = (props) => {
       }
     }
   }, [isModalOpen, data]);
-  
   return (
     <Modal
       title={isView ? '查看' : isEdit ? '编辑' : '创建'}
       open={isModalOpen}
-      onOk={handleOk}
       onCancel={handleCancel}
       footer={
         <Row justify='end'>
@@ -77,18 +90,43 @@ const EditModal: React.FC<IEditModalProps> = (props) => {
           <Input />
         </Form.Item>
         <Form.Item
-          label='账号'
+          label='名称'
           name='name'
-          rules={[{ required: true, message: '请输入角色名称' }]}
+          rules={[{ required: true, message: '请输入名称' }]}
         >
           <Input />
         </Form.Item>
         <Form.Item
           label='code'
           name='code'
-          rules={[{ required: true, message: '请输入角色code' }]}
+          rules={[{ required: true, message: '请输入code' }]}
         >
           <Input />
+        </Form.Item>
+        <Form.Item
+          label='菜单类型'
+          name='type'
+          rules={[{ required: true, message: '请输入菜单类型' }]}
+        >
+          <Radio.Group>
+            {allDicItems.MENU_TYPE?.map((item) => (
+              <Radio key={item.value} value={item.value}>{item.label}</Radio>
+            ))}
+          </Radio.Group>
+        </Form.Item>
+       <Form.Item dependencies={['type']} noStyle>
+       {({getFieldValue}) => {
+        const type = getFieldValue('type');
+        return (
+          <Form.Item
+          label='访问路径'
+          name='path'
+          rules={[{ required: type == '2', message: '请输入访问路径' }]}
+        >
+          <Input />
+        </Form.Item>
+        )
+       }}
         </Form.Item>
       </Form>
     </Modal>

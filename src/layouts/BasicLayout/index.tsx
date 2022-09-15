@@ -1,16 +1,21 @@
 import { useEffect } from "react";
 import { Layout } from "antd";
-import { getUserInfo } from "@/store/global";
+import { getAllDictionariesThunk, getMenuListThunk, getUserInfo } from "@/store/global";
 import Header from "./Header";
 import Sider from "./Sider";
 import Content from "./Content";
-import { useAppDispatch, useAppSelector } from '@/hooks/store';
+import { useAppDispatch } from '@/hooks/store';
 import { useNavigate } from 'react-router-dom';
 
 const BasicLayout: React.FC<{}> = () => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   useEffect(() => {
-    dispatch(getUserInfo());
+    dispatch(getUserInfo()).unwrap().catch(() => {
+      navigate('/login');
+    });
+    dispatch(getAllDictionariesThunk());
+    dispatch(getMenuListThunk());
   }, []);
   return (
     <Layout className="admin-layout">

@@ -15,9 +15,21 @@ export const userLogout = async () => {
 };
 
 export const userPage = async (params: IUserParams) => {
-  return axios.get<IUserParams, IUserPage>('/api/user/page', {
+  return axios.get<IUserPage, IUserPage>('/api/user/page', {
     params,
   });
+};
+
+export const getUserListByRoleId = async (id: number) => {
+  return axios.get<IUserInfo[], IUserInfo[]>('/api/user/getListByRoleId', {
+    params: {
+      id,
+    },
+  });
+};
+
+export const getUserList = async () => {
+  return axios.get<IUserInfo[], IUserInfo[]>('/api/user/list');
 };
 
 export const userUpdate = async (data: Omit<IUserInfo, 'password'>) => {

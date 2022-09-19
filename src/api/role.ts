@@ -24,3 +24,19 @@ export const updateRole = async (data: IRoleInfo) => {
 export const removeByIds = async (data: { ids: React.Key[]}) => {
   return axios.post('/api/role/removeByIds', data);
 };
+
+export const distributionUser = async ({ roleIds, userIds }: { roleIds: number[]; userIds: number[]}) => {
+  return axios.post('/api/role/distributionUser', {
+    roleIds,
+    userIds,
+  });
+};
+
+interface IDistributionResourceParams {
+  id: number;
+  resourceIds: number[];
+  type: 'api' | 'menu';
+}
+export const distributionResource = async (data: IDistributionResourceParams) => {
+  return axios.post('/api/role/distributionResource', data);
+};

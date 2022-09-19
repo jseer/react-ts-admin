@@ -77,6 +77,7 @@ const EditModal: React.FC<IEditModalProps> = (props) => {
         {...formItemLayout}
         onFinish={onFinish}
         disabled={isView}
+        autoComplete="off"
       >
         <Form.Item name='id' hidden>
           <Input />
@@ -104,7 +105,7 @@ const EditModal: React.FC<IEditModalProps> = (props) => {
         >
           <Input />
         </Form.Item>
-        {/* <Form.Item
+        <Form.Item
           name='password'
           label='密码'
           rules={[
@@ -115,15 +116,15 @@ const EditModal: React.FC<IEditModalProps> = (props) => {
           ]}
         >
           <Input.Password placeholder='请输入密码' />
-        </Form.Item> */}
+        </Form.Item>
         <Form.Item
           name='gender'
           label='性别'
           rules={[{ required: true, message: '请输入性别' }]}
         >
           <Radio.Group>
-            <Radio value={1}>男</Radio>
-            <Radio value={2}>女</Radio>
+            <Radio value={'1'}>男</Radio>
+            <Radio value={'2'}>女</Radio>
           </Radio.Group>
         </Form.Item>
         <Form.Item label='角色' name='roles'>

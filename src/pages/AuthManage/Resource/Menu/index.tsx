@@ -8,70 +8,61 @@ import {
   Button,
   Space,
   FormProps,
+  Table,
   message,
-  TableColumnProps,
 } from 'antd';
-import DictionaryModal from './DictionaryModal';
-import { formItemLayout, initPageInfo } from '@/utils/common';
-import {
-  IDictionariesInfo,
-  dictionariesPage,
-  removeByIds,
-  IDictionariesItem,
-} from '@/api/dictionaries';
-import useModal from '@/hooks/useModal';
-import useTable from '@/hooks/useTable';
-import Table from '@/components/Table';
-import DictionaryItemModal from './DictionaryItemModal';
+import EditModal from './EditModal';
+import { formItemLayout, getDicItemLabel } from '@/utils/common';
+import { IMenuInfo, getMenuList, removeByIds } from '@/api/menu';
+import { useAppSelector } from '@/hooks/store';
 
 export type IModalType = 'create' | 'edit' | 'view';
-const Dictionaries: React.FC = () => {
+const MenuList: React.FC = () => {
   const [form] = Form.useForm();
-  const { isModalOpen, modalType, modalData, showModal, hideModal } =
-    useModal<IDictionariesInfo>();
-  const {
-    isModalOpen: isModalOpenItem,
-    modalType: modalTypeItem,
-    modalData: modalDataItem,
-    showModal: showItemModal,
-    hideModal: hideItemModal,
-  } = useModal<IDictionariesInfo>();
-  const {
-    selectedRowKeys,
-    setSelectedRowKeys,
-    total,
-    setTotal,
-    setLoading,
-    loading,
-    list,
-    setList,
-    pageInfo,
-    setPageInfo,
-  } = useTable<IDictionariesInfo>();
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalType, setModalType] = useState<IModalType>('create');
+  const [modalData, setModalData] = useState<IMenuInfo | null>(null);
+  const [list, setList] = useState<IMenuInfo[]>([]);
+  const [loading, setLoading] = useState(false);
+  const { allDicItems } = useAppSelector((state) => ({
+    allDicItems: state.global.allDicItems,
+  }))
 
-  const onFinish: FormProps['onFinish'] = () => {
-    getDictionariesPage();
+  const showModal = (type: IModalType, data: IMenuInfo | null) => {
+    setIsModalOpen(true);
+    setModalType(type);
+    setModalData(data);
   };
 
-  const getDictionariesPage = async () => {
+  const hideModal = () => {
+    setIsModalOpen(false);
+    setModalType('create');
+    setModalData(null);
+  };
+
+ 
+  const onFinish: FormProps['onFinish'] = () => {
+    queryMenuList();
+  };
+
+  const queryMenuList = async () => {
     try {
       setLoading(true);
-      const data = await dictionariesPage({
+      const data = await getMenuList({
         ...form.getFieldsValue(),
-        ...pageInfo,
       });
-      setList(data.list);
-      setTotal(data.total);
-    } catch (e) {
+      setList(data);
+    } catch(e) {
       console.log(e);
     }
     setLoading(false);
   };
   useEffect(() => {
-    getDictionariesPage();
-  }, [pageInfo]);
+    queryMenuList();
+  }, []);
 
-  const columns: TableColumnProps<IDictionariesInfo>[] = [
+  const columns = [
     {
       title: 'ID',
       dataIndex: 'id',
@@ -88,42 +79,56 @@ const Dictionaries: React.FC = () => {
       key: 'code',
     },
     {
-      title: '数量',
-      dataIndex: 'items',
-      key: 'items',
-      render: (text: any[]) => {
-        return text?.length;
-      },
+      title: '菜单类型',
+      dataIndex: 'type',
+      key: 'type',
+      render: (text: string) => {
+        return getDicItemLabel(allDicItems.MENU_TYPE, text);
+      }
+    },
+    {
+      title: '访问路径',
+      dataIndex: 'path',
+      key: 'path',
+    },
+    {
+      title: '排序',
+      dataIndex: 'sort',
+      key: 'sort',
     },
     {
       title: '操作',
       key: 'operator',
-      render: (_: any, record: IDictionariesInfo) => {
+      render: (_: any, record: IMenuInfo) => {
         return (
           <Space>
             <Button
               type='link'
+              size="small"
               onClick={() => {
                 showModal('edit', record);
               }}
             >
               编辑
             </Button>
-            {/* <Button
+            <Button
               type='link'
               onClick={() => {
                 showModal('view', record);
               }}
+              size="small"
             >
               查看
-            </Button> */}
+            </Button>
             <Button
               type='link'
               onClick={() => {
-                showItemModal('edit', record);
+                showModal('create', record);
               }}
+              size="small"
+              hidden={record.type === '2'}
             >
-              值
+              添加菜单
             </Button>
           </Space>
         );
@@ -134,7 +139,7 @@ const Dictionaries: React.FC = () => {
   const removeRoles = async () => {
     await removeByIds({ ids: selectedRowKeys });
     message.success('删除成功');
-    getDictionariesPage();
+    queryMenuList();
   };
   return (
     <div>
@@ -159,7 +164,7 @@ const Dictionaries: React.FC = () => {
                 <Button
                   onClick={() => {
                     form.resetFields();
-                    setPageInfo({ ...initPageInfo });
+                    queryMenuList();
                   }}
                 >
                   重置
@@ -175,7 +180,7 @@ const Dictionaries: React.FC = () => {
             <Button
               type='primary'
               onClick={() => {
-                showModal('create', {} as IDictionariesInfo);
+                showModal('create', null);
               }}
             >
               添加
@@ -185,44 +190,32 @@ const Dictionaries: React.FC = () => {
             </Button>
           </Space>
         </div>
-        <Table<IDictionariesInfo>
+        <Table
           loading={loading}
-          list={list}
+          dataSource={list}
           columns={columns}
-          pageInfo={pageInfo}
-          setPageInfo={setPageInfo}
-          total={total}
-          setSelectedRowKeys={setSelectedRowKeys}
-          selectedRowKeys={selectedRowKeys}
+          rowKey='id'
+          rowSelection={{
+            checkStrictly: false,
+            selectedRowKeys,
+            onChange: (selectedRowKeys) => {
+              setSelectedRowKeys(selectedRowKeys);
+            },
+          }}
         />
       </Card>
-      <DictionaryModal
+      <EditModal
         isModalOpen={isModalOpen}
         handleCancel={() => {
           hideModal();
         }}
-        updateRefresh={getDictionariesPage}
-        createRefresh={() => {
-          setPageInfo({
-            current: 1,
-            pageSize: pageInfo.pageSize,
-          });
-        }}
+        updateRefresh={queryMenuList}
+        createRefresh={queryMenuList}
         data={modalData}
         type={modalType}
-      />
-
-      <DictionaryItemModal
-        isModalOpen={isModalOpenItem}
-        handleCancel={() => {
-          hideItemModal();
-        }}
-        updateRefresh={getDictionariesPage}
-        data={modalDataItem}
-        type={modalTypeItem}
       />
     </div>
   );
 };
 
-export default Dictionaries;
+export default MenuList;

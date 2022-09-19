@@ -108,8 +108,8 @@ const UserList: React.FC = () => {
       title: '性别',
       dataIndex: 'gender',
       key: 'gender',
-      render: (text: string) => {
-        return getDicItemLabel(allDicItems.GENDER, text);
+      render: (text: number) => {
+        return text === 1 ? '男' : text === 2 ? '女' : '';
       }
     },
     {
@@ -123,6 +123,7 @@ const UserList: React.FC = () => {
               onClick={() => {
                 showModal('edit', record);
               }}
+              size="small"
             >
               编辑
             </Button>
@@ -131,6 +132,7 @@ const UserList: React.FC = () => {
               onClick={() => {
                 showModal('view', record);
               }}
+              size="small"
             >
               查看
             </Button>

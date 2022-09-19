@@ -23,6 +23,14 @@ export const getMenuList = async (params?: any) => {
   });
 };
 
+export const getMenuListByRoleId = async (id: number) => {
+  return axios.get<IMenuListItem[], IMenuListItem[]>('/api/menu/listByRoleId', {
+    params: {
+      id,
+    },
+  });
+};
+
 export const updateMenu = async (data: IMenuInfo) => {
   return axios.post<boolean, boolean>('/api/menu/update', data);
 };

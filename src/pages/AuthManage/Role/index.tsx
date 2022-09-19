@@ -16,6 +16,9 @@ import EditModal from './EditModal';
 import { formItemLayout, initPageInfo } from '@/utils/common';
 import { IRoleInfo, rolePageThunk } from '@/store/role';
 import { removeByIds } from '@/api/role';
+import useModal from '@/hooks/useModal';
+import UserModal from './UserModal';
+import ResourceModal from './ResourceModal';
 
 export type IModalType = 'create' | 'edit' | 'view';
 const RoleList: React.FC = () => {
@@ -32,6 +35,20 @@ const RoleList: React.FC = () => {
       listLoading,
     };
   });
+  const {
+    isModalOpen: isUserModalOpen,
+    modalData: userModalData,
+    showModal: showUserModal,
+    hideModal: hideUserModal,
+  } = useModal<IRoleInfo>();
+
+  const {
+    isModalOpen: isResourceModalOpen,
+    modalData: resourceModalData,
+    showModal: showResourceModal,
+    hideModal: hideResourceModal,
+  } = useModal<IRoleInfo>();
+
   const showModal = (type: IModalType, data: IRoleInfo | null) => {
     setIsModalOpen(true);
     setModalType(type);
@@ -90,6 +107,7 @@ const RoleList: React.FC = () => {
               onClick={() => {
                 showModal('edit', record);
               }}
+              size="small"
             >
               编辑
             </Button>
@@ -98,8 +116,27 @@ const RoleList: React.FC = () => {
               onClick={() => {
                 showModal('view', record);
               }}
+              size="small"
             >
               查看
+            </Button>
+            <Button
+              type='link'
+              onClick={() => {
+                showUserModal('edit', record);
+              }}
+              size="small"
+            >
+              分配用户
+            </Button>
+            <Button
+              type='link'
+              onClick={() => {
+                showResourceModal('edit', record);
+              }}
+              size="small"
+            >
+              分配资源
             </Button>
           </Space>
         );
@@ -205,6 +242,21 @@ const RoleList: React.FC = () => {
         }}
         data={modalData}
         type={modalType}
+      />
+
+      <UserModal
+        isModalOpen={isUserModalOpen}
+        handleCancel={() => {
+          hideUserModal();
+        }}
+        data={userModalData}
+      />
+       <ResourceModal
+        isModalOpen={isResourceModalOpen}
+        handleCancel={() => {
+          hideResourceModal();
+        }}
+        data={resourceModalData}
       />
     </div>
   );

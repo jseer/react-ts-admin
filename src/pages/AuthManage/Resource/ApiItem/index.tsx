@@ -10,27 +10,26 @@ import {
   FormProps,
   Table,
   message,
-  TableColumnProps,
 } from 'antd';
 import EditModal from './EditModal';
 import { formItemLayout, getDicItemLabel } from '@/utils/common';
-import { IMenuInfo, getMenuList, removeByIds } from '@/api/menu';
+import { IApiItemInfo, getApiItemList, removeByIds } from '@/api/apiItem';
 import { useAppSelector } from '@/hooks/store';
 
 export type IModalType = 'create' | 'edit' | 'view';
-const MenuList: React.FC = () => {
+const ApiItemList: React.FC = () => {
   const [form] = Form.useForm();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState<IModalType>('create');
-  const [modalData, setModalData] = useState<IMenuInfo | null>(null);
-  const [list, setList] = useState<IMenuInfo[]>([]);
+  const [modalData, setModalData] = useState<IApiItemInfo>({} as IApiItemInfo);
+  const [list, setList] = useState<IApiItemInfo[]>([]);
   const [loading, setLoading] = useState(false);
   const { allDicItems } = useAppSelector((state) => ({
     allDicItems: state.global.allDicItems,
   }))
 
-  const showModal = (type: IModalType, data: IMenuInfo | null) => {
+  const showModal = (type: IModalType, data: IApiItemInfo) => {
     setIsModalOpen(true);
     setModalType(type);
     setModalData(data);
@@ -39,18 +38,18 @@ const MenuList: React.FC = () => {
   const hideModal = () => {
     setIsModalOpen(false);
     setModalType('create');
-    setModalData(null);
+    setModalData({} as IApiItemInfo);
   };
 
  
   const onFinish: FormProps['onFinish'] = () => {
-    getmenuList();
+    queryApiItemList();
   };
 
-  const getmenuList = async () => {
+  const queryApiItemList = async () => {
     try {
       setLoading(true);
-      const data = await getMenuList({
+      const data = await getApiItemList({
         ...form.getFieldsValue(),
       });
       setList(data);
@@ -60,7 +59,7 @@ const MenuList: React.FC = () => {
     setLoading(false);
   };
   useEffect(() => {
-    getmenuList();
+    queryApiItemList();
   }, []);
 
   const columns = [
@@ -68,6 +67,7 @@ const MenuList: React.FC = () => {
       title: 'ID',
       dataIndex: 'id',
       key: 'id',
+      width: 80,
     },
     {
       title: '名称',
@@ -84,7 +84,7 @@ const MenuList: React.FC = () => {
       dataIndex: 'type',
       key: 'type',
       render: (text: string) => {
-        return getDicItemLabel(allDicItems.MENU_TYPE, text);
+        return getDicItemLabel(allDicItems.API_ITEM_TYPE, text);
       }
     },
     {
@@ -93,13 +93,19 @@ const MenuList: React.FC = () => {
       key: 'path',
     },
     {
+      title: '排序',
+      dataIndex: 'sort',
+      key: 'sort',
+    },
+    {
       title: '操作',
       key: 'operator',
-      render: (_: any, record: IMenuInfo) => {
+      render: (_: any, record: IApiItemInfo) => {
         return (
           <Space>
             <Button
               type='link'
+              size="small"
               onClick={() => {
                 showModal('edit', record);
               }}
@@ -108,6 +114,7 @@ const MenuList: React.FC = () => {
             </Button>
             <Button
               type='link'
+              size="small"
               onClick={() => {
                 showModal('view', record);
               }}
@@ -116,12 +123,13 @@ const MenuList: React.FC = () => {
             </Button>
             <Button
               type='link'
+              size="small"
               onClick={() => {
                 showModal('create', record);
               }}
               hidden={record.type === '2'}
             >
-              添加菜单
+              添加接口
             </Button>
           </Space>
         );
@@ -132,7 +140,7 @@ const MenuList: React.FC = () => {
   const removeRoles = async () => {
     await removeByIds({ ids: selectedRowKeys });
     message.success('删除成功');
-    getmenuList();
+    queryApiItemList();
   };
   return (
     <div>
@@ -157,7 +165,7 @@ const MenuList: React.FC = () => {
                 <Button
                   onClick={() => {
                     form.resetFields();
-                    getmenuList();
+                    queryApiItemList();
                   }}
                 >
                   重置
@@ -173,7 +181,7 @@ const MenuList: React.FC = () => {
             <Button
               type='primary'
               onClick={() => {
-                showModal('create', null);
+                showModal('create', {} as IApiItemInfo);
               }}
             >
               添加
@@ -202,8 +210,8 @@ const MenuList: React.FC = () => {
         handleCancel={() => {
           hideModal();
         }}
-        updateRefresh={getmenuList}
-        createRefresh={getmenuList}
+        updateRefresh={queryApiItemList}
+        createRefresh={queryApiItemList}
         data={modalData}
         type={modalType}
       />
@@ -211,4 +219,4 @@ const MenuList: React.FC = () => {
   );
 };
 
-export default MenuList;
+export default ApiItemList;

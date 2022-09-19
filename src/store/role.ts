@@ -43,6 +43,7 @@ export const userCreateThunk = createAsyncThunk(
 );
 
 export interface IRoleInfo {
+  id: number;
   name: string;
   code: string;
 }

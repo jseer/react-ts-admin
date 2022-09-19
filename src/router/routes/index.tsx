@@ -7,7 +7,8 @@ import User from "@/pages/AuthManage/User";
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
 import Role from '@/pages/AuthManage/Role';
-import Menu from '@/pages/AuthManage/Menu';
+import Menu from '@/pages/AuthManage/Resource/Menu';
+import ApiItem from '@/pages/AuthManage/Resource/ApiItem';
 import Dictionaries from '@/pages/BaseData/Dictionaries';
 
 const routes: RouteObject[] = [
@@ -39,8 +40,17 @@ const routes: RouteObject[] = [
             element: <Role />,
           },
           {
-            path: "/authManage/menu",
-            element: <Menu />,
+            path: "/authManage/resource",
+            children: [
+              {
+                path: "/authManage/resource/menu",
+                element: <Menu />,
+              },
+              {
+                path: "/authManage/resource/apiItem",
+                element: <ApiItem />,
+              },
+            ]
           },
         ],
       },

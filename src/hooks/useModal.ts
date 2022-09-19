@@ -4,9 +4,9 @@ export type IModalType = 'create' | 'edit' | 'view';
 const useModal = <T>() => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState<IModalType>('create');
-  const [modalData, setModalData] = useState<T | null>(null);
+  const [modalData, setModalData] = useState<T>({} as T);
 
-  const showModal = (type: IModalType, data: T | null) => {
+  const showModal = (type: IModalType, data: T) => {
     setIsModalOpen(true);
     setModalType(type);
     setModalData(data);
@@ -15,7 +15,7 @@ const useModal = <T>() => {
   const hideModal = () => {
     setIsModalOpen(false);
     setModalType('create');
-    setModalData(null);
+    setModalData({} as T);
   };
   return {
     showModal,

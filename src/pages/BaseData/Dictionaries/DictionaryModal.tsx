@@ -43,14 +43,10 @@ const EditModal: React.FC<IEditModalProps> = (props) => {
   };
 
   useEffect(() => {
-    if (isModalOpen) {
-      if (type === 'create' || !data) {
-        form.resetFields();
-      } else if (data) {
-        form.setFieldsValue(data);
-      }
-    } else {
+    if (type === 'create' || !isModalOpen) {
       form.resetFields();
+    } else {
+      form.setFieldsValue(data);
     }
   }, [isModalOpen, data]);
 

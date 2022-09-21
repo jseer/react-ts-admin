@@ -1,8 +1,10 @@
-import { getMenuList, IMenuInfo, IMenuListItem } from '@/api/menu';
+import { getAuthMenuList, IMenuInfo } from '@/api/menu';
 import { getAllDictionaries, IAllDictionaries } from '@/api/dictionaries';
 import { userLogin, userLogout, getCurrentUser } from '@/api/user';
 import { IUserInfo } from '@/store/user';
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import md5 from 'crypto-js/md5';
+import { loopMenuList2PageList } from '@/utils/common';
 
 interface IInitialState {
   collapsed: boolean;
@@ -11,7 +13,9 @@ interface IInitialState {
   isLogin: boolean;
   userInfo: IUserInfo | null;
   allDicItems: IAllDictionaries;
-  menuList: IMenuListItem[];
+  menuList: IMenuInfo[];
+  authPageList: IMenuInfo[];
+  authPageListLoading: boolean;
 }
 const initialState: IInitialState = {
   collapsed: false,
@@ -21,6 +25,8 @@ const initialState: IInitialState = {
   userInfo: null,
   allDicItems: {},
   menuList: [],
+  authPageList: [],
+  authPageListLoading: true,
 };
 
 const globalSlice = createSlice({
@@ -60,8 +66,14 @@ const globalSlice = createSlice({
       state.userInfo = payload;
     }).addCase(getAllDictionariesThunk.fulfilled, (state, { payload }) => {
       state.allDicItems = payload;
-    }).addCase(getMenuListThunk.fulfilled, (state, { payload }) => {
+    }).addCase(getAuthMenuListThunk.fulfilled, (state, { payload }) => {
+      const pageList: IMenuInfo[] = [];
+      loopMenuList2PageList(payload, pageList);
+      state.authPageListLoading = false;
+      state.authPageList = pageList;
       state.menuList = payload;
+    }).addCase(getAuthMenuListThunk.rejected, (state, { payload }) => {
+      state.authPageListLoading = false;
     })
   },
 });
@@ -73,6 +85,7 @@ export interface IUserLogin {
 export const login = createAsyncThunk(
   'global/login',
   async (params: IUserLogin) => {
+    params.password = md5(params.password).toString();
     const result = await userLogin(params);
     return result;
   }
@@ -102,10 +115,10 @@ export const getAllDictionariesThunk = createAsyncThunk(
   }
 );
 
-export const getMenuListThunk = createAsyncThunk(
-  'global/getMenuList',
+export const getAuthMenuListThunk = createAsyncThunk(
+  'global/getAuthMenuList',
   async () => {
-    const data = await getMenuList();
+    const data = await getAuthMenuList();
     return data;
   }
 );

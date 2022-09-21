@@ -10,6 +10,7 @@ import {
   FormProps,
   Table,
   message,
+  Tag,
 } from 'antd';
 import EditModal from './EditModal';
 import { formItemLayout, getDicItemLabel } from '@/utils/common';
@@ -92,6 +93,16 @@ const MenuList: React.FC = () => {
       key: 'path',
     },
     {
+      title: '状态',
+      dataIndex: 'status',
+      key: 'status',
+      render: (text: number) => {
+        const color = ['#f50', 'green'][text];
+        const textMap = ['禁用', '启用'];
+        return text ? <Tag color={color}>{textMap[text]}</Tag> : '';
+      }
+    },
+    {
       title: '排序',
       dataIndex: 'sort',
       key: 'sort',
@@ -147,12 +158,12 @@ const MenuList: React.FC = () => {
         <Form form={form} {...formItemLayout} onFinish={onFinish}>
           <Row>
             <Col span={6}>
-              <Form.Item label='名称' name='name'>
+              <Form.Item label='名称' name='qp-name-like'>
                 <Input />
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item label='code' name='code'>
+              <Form.Item label='code' name='qp-code-like'>
                 <Input />
               </Form.Item>
             </Col>

@@ -27,7 +27,6 @@ interface IEditModalProps {
   updateRefresh: () => void;
 }
 
-const { Option } = Select;
 const EditModal: React.FC<IEditModalProps> = (props) => {
   const {
     isModalOpen,
@@ -117,7 +116,7 @@ const EditModal: React.FC<IEditModalProps> = (props) => {
           name='type'
           rules={[{ required: true, message: '请输入菜单类型' }]}
         >
-          <Radio.Group>
+          <Radio.Group disabled={isEdit}>
             {allDicItems.MENU_TYPE?.map((item) => (
               <Radio key={item.value} value={item.value}>
                 {item.label}
@@ -131,15 +130,38 @@ const EditModal: React.FC<IEditModalProps> = (props) => {
         <Form.Item dependencies={['type']} noStyle>
           {({ getFieldValue }) => {
             const type = getFieldValue('type');
-            return (
-              <Form.Item
-                label='访问路径'
-                name='path'
-                rules={[{ required: type == '2', message: '请输入访问路径' }]}
-              >
-                <Input />
-              </Form.Item>
-            );
+            if(type === '2') {
+              return (
+                <Form.Item
+                  label='访问路径'
+                  name='path'
+                  rules={[{ required: true, message: '请输入访问路径' }]}
+                >
+                  <Input />
+                </Form.Item>
+              );
+            }
+            return null;
+          }}
+        </Form.Item>
+        <Form.Item dependencies={['type']} noStyle>
+          {({ getFieldValue }) => {
+            const type = getFieldValue('type');
+            if(type === '2') {
+              return (
+                <Form.Item
+                  label='状态'
+                  name='status'
+                  rules={[{ required: true, message: '请选择' }]}
+                >
+                  <Radio.Group>
+                    <Radio value={1}>启用</Radio>
+                    <Radio value={0}>禁用</Radio>
+                  </Radio.Group>
+                </Form.Item>
+              );
+            }
+            return null;
           }}
         </Form.Item>
       </Form>

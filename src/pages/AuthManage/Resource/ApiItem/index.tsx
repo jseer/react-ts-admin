@@ -10,9 +10,10 @@ import {
   FormProps,
   Table,
   message,
+  Tag,
 } from 'antd';
 import EditModal from './EditModal';
-import { formItemLayout, getDicItemLabel } from '@/utils/common';
+import { formItemLayout, getDicItemLabel, getListItem } from '@/utils/common';
 import { IApiItemInfo, getApiItemList, removeByIds } from '@/api/apiItem';
 import { useAppSelector } from '@/hooks/store';
 
@@ -25,9 +26,10 @@ const ApiItemList: React.FC = () => {
   const [modalData, setModalData] = useState<IApiItemInfo>({} as IApiItemInfo);
   const [list, setList] = useState<IApiItemInfo[]>([]);
   const [loading, setLoading] = useState(false);
+
   const { allDicItems } = useAppSelector((state) => ({
     allDicItems: state.global.allDicItems,
-  }))
+  }));
 
   const showModal = (type: IModalType, data: IApiItemInfo) => {
     setIsModalOpen(true);
@@ -41,7 +43,6 @@ const ApiItemList: React.FC = () => {
     setModalData({} as IApiItemInfo);
   };
 
- 
   const onFinish: FormProps['onFinish'] = () => {
     queryApiItemList();
   };
@@ -53,7 +54,7 @@ const ApiItemList: React.FC = () => {
         ...form.getFieldsValue(),
       });
       setList(data);
-    } catch(e) {
+    } catch (e) {
       console.log(e);
     }
     setLoading(false);
@@ -62,7 +63,7 @@ const ApiItemList: React.FC = () => {
     queryApiItemList();
   }, []);
 
-  const columns = [
+  const columns: any[] = [
     {
       title: 'ID',
       dataIndex: 'id',
@@ -80,32 +81,63 @@ const ApiItemList: React.FC = () => {
       key: 'code',
     },
     {
-      title: '菜单类型',
+      title: '类型',
       dataIndex: 'type',
       key: 'type',
       render: (text: string) => {
         return getDicItemLabel(allDicItems.API_ITEM_TYPE, text);
-      }
+      },
     },
     {
-      title: '访问路径',
+      title: '请求路径',
       dataIndex: 'path',
       key: 'path',
     },
     {
-      title: '排序',
-      dataIndex: 'sort',
-      key: 'sort',
+      title: '请求方法',
+      dataIndex: 'method',
+      key: 'method',
+    },
+    {
+      title: '状态',
+      dataIndex: 'status',
+      key: 'status',
+      render: (text: number, record: IApiItemInfo) => {
+        const color = ['red', 'green'][text];
+        const textMap = ['禁用', '启用'];
+        return (
+          record.type === '2' &&
+          (text == null ? '' : <Tag color={color}>{textMap[text]}</Tag>)
+        );
+      },
+    },
+    {
+      title: '是否校验',
+      dataIndex: 'needCheck',
+      key: 'needCheck',
+      render: (text: number, record: any) => {
+        return record.type === '2' ? (text === 0 ? '否' : '是') : '';
+      },
+    },
+    {
+      title: '是否登录',
+      dataIndex: 'needLogin',
+      key: 'needLogin',
+      render: (text: number, record: any) => {
+        return record.type === '2' ? (text === 0 ? '否' : '是') : '';
+      },
     },
     {
       title: '操作',
       key: 'operator',
+      fixed: 'right',
+      width: 150,
       render: (_: any, record: IApiItemInfo) => {
         return (
           <Space>
             <Button
               type='link'
-              size="small"
+              size='small'
               onClick={() => {
                 showModal('edit', record);
               }}
@@ -114,7 +146,7 @@ const ApiItemList: React.FC = () => {
             </Button>
             <Button
               type='link'
-              size="small"
+              size='small'
               onClick={() => {
                 showModal('view', record);
               }}
@@ -123,13 +155,13 @@ const ApiItemList: React.FC = () => {
             </Button>
             <Button
               type='link'
-              size="small"
+              size='small'
               onClick={() => {
                 showModal('create', record);
               }}
               hidden={record.type === '2'}
             >
-              添加接口
+              添加
             </Button>
           </Space>
         );
@@ -148,12 +180,12 @@ const ApiItemList: React.FC = () => {
         <Form form={form} {...formItemLayout} onFinish={onFinish}>
           <Row>
             <Col span={6}>
-              <Form.Item label='名称' name='name'>
+              <Form.Item label='名称' name='qp-name-like'>
                 <Input />
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item label='code' name='code'>
+              <Form.Item label='code' name='qp-code-like'>
                 <Input />
               </Form.Item>
             </Col>
@@ -195,6 +227,7 @@ const ApiItemList: React.FC = () => {
           loading={loading}
           dataSource={list}
           columns={columns}
+          scroll={{ x: 'max-content' }}
           rowKey='id'
           rowSelection={{
             checkStrictly: false,

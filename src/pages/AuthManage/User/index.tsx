@@ -30,9 +30,6 @@ const UserList: React.FC = () => {
   const [modalType, setModalType] = useState<IModalType>('create');
   const [modalData, setModalData] = useState<IUserInfo | null>(null);
   const [roleList, setRoleList] = useState<IRoleInfo[]>([]);
-  const { allDicItems } = useAppSelector((state) => ({
-    allDicItems: state.global.allDicItems,
-  }))
   const { list, listLoading } = useAppSelector((state) => {
     const { userList, listLoading } = state.user;
     return {
@@ -81,7 +78,7 @@ const UserList: React.FC = () => {
       key: 'id',
     },
     {
-      title: '姓名',
+      title: '名称',
       dataIndex: 'name',
       key: 'name',
     },
@@ -91,7 +88,7 @@ const UserList: React.FC = () => {
       key: 'roles',
       ellipsis: true,
       render: (_: any, record: IUserInfo) => {
-        const roleStr = record.roles?.map((item) => item.code).join(',');
+        const roleStr = record.roles?.map((item) => item.name).join(',');
         return roleStr ? (
           <Tooltip title={roleStr}>
             <span>{roleStr}</span>
@@ -159,17 +156,17 @@ const UserList: React.FC = () => {
         <Form form={form} {...formItemLayout} onFinish={onFinish}>
           <Row>
             <Col span={6}>
-              <Form.Item label='角色' name='roles'>
+              <Form.Item label='角色' name='qp-roles-in'>
                 <SelectRole roleList={roleList} />
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item label='账号' name='name'>
+              <Form.Item label='账号' name='qp-name-like'>
                 <Input />
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item label='邮箱' name='email'>
+              <Form.Item label='邮箱' name='qp-email-like'>
                 <Input />
               </Form.Item>
             </Col>

@@ -15,7 +15,6 @@ import {
 } from 'antd';
 import { useEffect } from 'react';
 import { IModalType } from '.';
-import SelectRole from './SelectRole';
 
 interface IEditModalProps {
   isModalOpen: boolean;
@@ -123,13 +122,13 @@ const EditModal: React.FC<IEditModalProps> = (props) => {
           rules={[{ required: true, message: '请输入性别' }]}
         >
           <Radio.Group>
-            <Radio value={'1'}>男</Radio>
-            <Radio value={'2'}>女</Radio>
+            <Radio value={1}>男</Radio>
+            <Radio value={2}>女</Radio>
           </Radio.Group>
         </Form.Item>
-        <Form.Item label='角色' name='roles'>
+        {/* <Form.Item label='角色' name='roles'>
           <SelectRole roleList={roleList} />
-        </Form.Item>
+        </Form.Item> */}
       </Form>
     </Modal>
   );

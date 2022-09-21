@@ -10,10 +10,11 @@ import {
   FormProps,
   Table,
   message,
+  Tag,
 } from 'antd';
 import { useAppDispatch, useAppSelector } from '@/hooks/store';
 import EditModal from './EditModal';
-import { formItemLayout, initPageInfo } from '@/utils/common';
+import { formItemLayout, getDicItemLabel, getListItem, initPageInfo } from '@/utils/common';
 import { IRoleInfo, rolePageThunk } from '@/store/role';
 import { removeByIds } from '@/api/role';
 import useModal from '@/hooks/useModal';
@@ -97,6 +98,16 @@ const RoleList: React.FC = () => {
       key: 'code',
     },
     {
+      title: '状态',
+      dataIndex: 'status',
+      key: 'status',
+      render: (text: number) => {
+        const color = ['red', 'green'][text];
+        const textMap = ['禁用', '启用'];
+        return text == undefined ? '' : <Tag color={color}>{textMap[text]}</Tag>;
+      }
+    },
+    {
       title: '操作',
       key: 'operator',
       render: (_: any, record: IRoleInfo) => {
@@ -155,12 +166,12 @@ const RoleList: React.FC = () => {
         <Form form={form} {...formItemLayout} onFinish={onFinish}>
           <Row>
             <Col span={6}>
-              <Form.Item label='名称' name='name'>
+              <Form.Item label='名称' name='qp-name-like'>
                 <Input />
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item label='code' name='code'>
+              <Form.Item label='code' name='qp-code-like'>
                 <Input />
               </Form.Item>
             </Col>

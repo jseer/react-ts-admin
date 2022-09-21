@@ -1,3 +1,4 @@
+import { IMenuInfo } from '@/api/menu';
 import { IDictionariesItem } from '@/api/dictionaries';
 export function getItem<T>(key: string, defaultValue: T): T;
 export function getItem<T>(key: string): T | undefined;
@@ -55,3 +56,22 @@ export const getDicItemLabel = (
     return item?.label;
   }
 };
+
+export const getListItem = (
+  list: any[] = [],
+  value: string | number,
+) => {
+  const item = list.find((dic) => dic.value == value);
+  return item;
+};
+
+export const loopMenuList2PageList = (menuList: IMenuInfo[], pageList: IMenuInfo[]) => {
+  menuList.forEach((menu) => {
+    // 页面
+    if(menu.type === '1' && menu.children) {
+      loopMenuList2PageList(menu.children, pageList);
+    } else if(menu.type === '2') {
+      pageList.push(menu);
+    }
+  })
+}

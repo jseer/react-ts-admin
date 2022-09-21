@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useAppSelector } from '@/hooks/store';
 import { getMenuList, IMenuInfo, getMenuListByRoleId } from '@/api/menu';
 import {
-  getApiItemList,
+  getApiItemDistributableList,
   getApiItemListByRoleId,
   IApiItemInfo,
 } from '@/api/apiItem';
@@ -22,6 +22,7 @@ const ResourceModal: React.FC<IUserModalProps> = (props) => {
   const { isModalOpen, handleCancel, data } = props;
   const [apiItemList, setApiItemList] = useState<IApiItemInfo[]>([]);
   const [menulist, setMenuList] = useState<IMenuInfo[]>([]);
+  const [parentsMap, setParentsMap] = useState<Record<number, any>>({});
   const { allDicItems } = useAppSelector((state) => ({
     allDicItems: state.global.allDicItems,
   }));
@@ -34,26 +35,45 @@ const ResourceModal: React.FC<IUserModalProps> = (props) => {
     });
   };
 
+  const getParentsMap = (data: any, records: Record<number, any>) => {
+    data.forEach((d: any) => {
+      records[d.id] = [d];
+      if (records[d.parentId]) {
+        records[d.id].push(...records[d.parentId]);
+      }
+      if (d.children) {
+        getParentsMap(d.children, records);
+      }
+    });
+  };
   const getData = async (type: 'api' | 'menu') => {
     if (data) {
+      let list;
+      let listWithIds;
       if (type === 'menu') {
-        await Promise.all([
-          getMenuList().then((data) => {
-            setMenuList(data);
-          }),
-          getMenuListByRoleId(data.id).then((data) => {
-            form.setFieldValue('resourceIds', data.map((d) => d.id));
-          }),
+        [list, listWithIds] = await Promise.all([
+          getMenuList(),
+          getMenuListByRoleId(data.id),
         ]);
       } else if (type === 'api') {
-        await Promise.all([
-          getApiItemList().then((data) => {
-            setApiItemList(data);
-          }),
-          getApiItemListByRoleId(data.id).then((data) => {
-            form.setFieldValue('resourceIds', data.map((d) => d.id));
-          }),
+        [list, listWithIds] = await Promise.all([
+          getApiItemDistributableList(),
+          getApiItemListByRoleId(data.id),
         ]);
+      }
+      if (list && listWithIds) {
+        const records: Record<number, any> = {};
+        getParentsMap(list, records);
+        setParentsMap(records);
+        if(type === 'menu') {
+          setMenuList(list);
+        } else if(type === 'api') {
+          setApiItemList(list);
+        }
+        form.setFieldValue(
+          'resourceIds',
+          listWithIds.filter((d) => records[d.id]).map((d) => d.id)
+        );
       }
     }
   };
@@ -62,6 +82,9 @@ const ResourceModal: React.FC<IUserModalProps> = (props) => {
       const type = form.getFieldValue('type');
       getData(type);
     } else {
+      setMenuList([]);
+      setApiItemList([]);
+      setParentsMap([]);
       form.resetFields();
     }
   }, [isModalOpen, data.id]);
@@ -90,10 +113,12 @@ const ResourceModal: React.FC<IUserModalProps> = (props) => {
               const value = e.target.value;
               if (value === 'api') {
                 getData(value).catch(() => {
+                  setParentsMap([]);
                   setMenuList([]);
                 });
               } else if (value === 'menu') {
                 getData(value).catch(() => {
+                  setParentsMap([]);
                   setApiItemList([]);
                 });
               }
@@ -111,7 +136,11 @@ const ResourceModal: React.FC<IUserModalProps> = (props) => {
             const type = getFieldValue('type');
             return (
               <Form.Item name='resourceIds' label='资源列表'>
-                <ResourceCheck type={type} list={type === 'api' ? apiItemList : menulist} />
+                <ResourceCheck
+                  type={type}
+                  list={type === 'api' ? apiItemList : menulist}
+                  parentsMap={parentsMap}
+                />
               </Form.Item>
             );
           }}

@@ -10,6 +10,7 @@ import Role from '@/pages/AuthManage/Role';
 import Menu from '@/pages/AuthManage/Resource/Menu';
 import ApiItem from '@/pages/AuthManage/Resource/ApiItem';
 import Dictionaries from '@/pages/BaseData/Dictionaries';
+import Tourist from '@/pages/AuthManage/Tourist';
 
 const routes: RouteObject[] = [
   {
@@ -38,6 +39,10 @@ const routes: RouteObject[] = [
           {
             path: "/authManage/role",
             element: <Role />,
+          },
+          {
+            path: "/authManage/tourist",
+            element: <Tourist />,
           },
           {
             path: "/authManage/resource",

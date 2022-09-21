@@ -2,9 +2,8 @@ import { Button, Form, Input, FormProps, Radio, Space } from "antd";
 import styles from "./index.module.less";
 import { formItemLayout } from "@/utils/common";
 import { useNavigate } from 'react-router-dom';
-import { userCreateThunk } from '@/store/user';
-import { useAppDispatch, useAppSelector } from '@/hooks/store';
-import {ArrowLeftOutlined } from '@ant-design/icons';
+import { userRegisterThunk } from '@/store/user';
+import { useAppDispatch } from '@/hooks/store';
 
 const tailFormItemLayout = {
   wrapperCol: {
@@ -23,7 +22,7 @@ const Register: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const onFinish: FormProps["onFinish"] = async (values) => {
-    await dispatch(userCreateThunk(values)).unwrap();
+    await dispatch(userRegisterThunk(values)).unwrap();
     navigate('/login?name='+ values.name);
   };
 
@@ -41,7 +40,7 @@ const Register: React.FC = () => {
         <Form.Item
           name="name"
           label="账号"
-          rules={[{ required: true, message: "请输入账号", whitespace: true }]}
+          rules={[{ required: true, message: "请输入账号", whitespace: true }, { type: 'string', max: 20, min: 1}]}
         >
           <Input placeholder="请输入账号" />
         </Form.Item>

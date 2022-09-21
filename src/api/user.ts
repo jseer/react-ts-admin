@@ -6,6 +6,11 @@ export const userCreate = async (data: IUserInfo) => {
   return axios.post<IUserInfo, IUserInfo>('/api/user/create', data);
 };
 
+export const userRegister = async (data: IUserInfo) => {
+  return axios.post<IUserInfo, IUserInfo>('/api/user/register', data);
+};
+
+
 export const userLogin = async (data: IUserLogin) => {
   return axios.post<IUserLogin, IUserInfo>('/api/user/login', data);
 };
@@ -42,4 +47,15 @@ export const removeByIds = async (data: { ids: React.Key[]}) => {
 
 export const getCurrentUser = async () => {
   return axios.get<IUserInfo, IUserInfo>('/api/user/getCurrent');
+}
+
+interface ITouristInfo {
+  name: string;
+  ip: string;
+  country: string;
+  province: string;
+  city: string;
+}
+export const touristLogin = async () => {
+  return axios.post<ITouristInfo, ITouristInfo>('/api/tourist/login');
 }

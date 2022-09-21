@@ -1,7 +1,7 @@
 import axios from '@/utils/axios';
 
 export interface IApiItemInfo {
-  id?: number;
+  id: number;
   code: string;
   name: string;
   path: string;
@@ -12,14 +12,15 @@ export const createApiItem = async (data: IApiItemInfo) => {
   return axios.post<IApiItemInfo, IApiItemInfo>('/api/apiItem/create', data);
 };
 
-// export interface IMenuListItem extends IApiItemInfo {
-//   children: 
-// }
 export type IApiItemListItem = (IApiItemInfo & { children: IApiItemListItem[]});
 export const getApiItemList = async (params?: any) => {
   return axios.get<IApiItemListItem[], IApiItemListItem[]>('/api/apiItem/list', {
     params,
   });
+};
+
+export const getApiItemDistributableList = async () => {
+  return axios.get<IApiItemListItem[], IApiItemListItem[]>('/api/apiItem/getDistributableList');
 };
 
 export const getApiItemListByRoleId = async (id: number) => {

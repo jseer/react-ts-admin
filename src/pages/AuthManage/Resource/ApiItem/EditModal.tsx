@@ -92,6 +92,10 @@ const EditModal: React.FC<IEditModalProps> = (props) => {
         {...formItemLayout}
         onFinish={onFinish}
         disabled={isView}
+        initialValues={{
+          needLogin: 1,
+          needCheck: 0,
+        }}
       >
         <Form.Item name='id' hidden>
           <Input />
@@ -115,7 +119,7 @@ const EditModal: React.FC<IEditModalProps> = (props) => {
           name='type'
           rules={[{ required: true, message: '请输入菜单类型' }]}
         >
-          <Radio.Group>
+          <Radio.Group disabled={isEdit}>
             {allDicItems.API_ITEM_TYPE?.map((item) => (
               <Radio key={item.value} value={item.value}>
                 {item.label}
@@ -126,15 +130,99 @@ const EditModal: React.FC<IEditModalProps> = (props) => {
         <Form.Item dependencies={['type']} noStyle>
           {({ getFieldValue }) => {
             const type = getFieldValue('type');
-            return (
-              <Form.Item
-                label='api接口路径'
-                name='path'
-                rules={[{ required: type == '2', message: '请输入访问路径' }]}
-              >
-                <Input />
-              </Form.Item>
-            );
+            if (type === '2') {
+              return (
+                <Form.Item
+                  label='请求路径'
+                  name='path'
+                  rules={[{ required: true, message: '请输入请求路径' }]}
+                >
+                  <Input />
+                </Form.Item>
+              );
+            }
+            return null;
+          }}
+        </Form.Item>
+        <Form.Item dependencies={['type']} noStyle>
+          {({ getFieldValue }) => {
+            const type = getFieldValue('type');
+            if (type === '2') {
+              return (
+                <Form.Item
+                  label='请求方法'
+                  name='method'
+                  rules={[{ required: true, message: '请选择' }]}
+                >
+                  <Radio.Group>
+                    <Radio value={'get'}>get</Radio>
+                    <Radio value={'post'}>post</Radio>
+                  </Radio.Group>
+                </Form.Item>
+              );
+            }
+            return null;
+          }}
+        </Form.Item>
+        <Form.Item dependencies={['type']} noStyle>
+          {({ getFieldValue }) => {
+            const type = getFieldValue('type');
+            if (type === '2') {
+              return (
+                <Form.Item
+                  label='是否登录'
+                  name='needLogin'
+                  rules={[{ required: true, message: '请选择' }]}
+                >
+                  <Radio.Group>
+                    <Radio value={1}>是</Radio>
+                    <Radio value={0}>否</Radio>
+                  </Radio.Group>
+                </Form.Item>
+              );
+            }
+            return null;
+          }}
+        </Form.Item>
+        <Form.Item dependencies={['type', 'needLogin']} noStyle>
+          {({ getFieldValue }) => {
+            const type = getFieldValue('type');
+            const needLogin = getFieldValue('needLogin');
+            if (type === '2' && needLogin) {
+              return (
+                <Form.Item
+                  label='是否校验'
+                  name='needCheck'
+                  rules={[{ required: true, message: '请选择' }]}
+                >
+                  <Radio.Group>
+                    <Radio value={1}>是</Radio>
+                    <Radio value={0}>否</Radio>
+                  </Radio.Group>
+                </Form.Item>
+              );
+            }
+            return null;
+          }}
+        </Form.Item>
+        <Form.Item dependencies={['type']} noStyle>
+          {({ getFieldValue }) => {
+            const type = getFieldValue('type');
+            if (type === '2') {
+              return (
+                <Form.Item
+                  label='状态'
+                  name='status'
+                  rules={[{ required: true, message: '请选择' }]}
+                >
+                  <Radio.Group>
+                    <Radio value={1}>启用</Radio>
+                    <Radio value={0}>禁用</Radio>
+                  </Radio.Group>
+                </Form.Item>
+              );
+            }
+            return null;
           }}
         </Form.Item>
       </Form>

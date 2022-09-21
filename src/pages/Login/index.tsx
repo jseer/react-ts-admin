@@ -5,6 +5,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useAppDispatch } from '@/hooks/store';
 import { login } from '@/store/global';
+import { touristLogin } from '@/api/user';
 
 const Login: React.FC = () => {
   const [form] = Form.useForm();
@@ -33,7 +34,7 @@ const Login: React.FC = () => {
       >
         <Form.Item
           name='name'
-          rules={[{ required: true, message: '请输入用户名' }]}
+          rules={[{ required: true, message: '请输入用户名', }, { type: 'string', max: 20, min: 1}]}
         >
           <Input
             prefix={<UserOutlined className='site-form-item-icon' />}
@@ -68,7 +69,13 @@ const Login: React.FC = () => {
             <span>
               Or <Link to={'/register'}>去注册</Link>
             </span>
-            <Link to={'/overview'}>游客登录</Link>
+            <Button type="link" onClick={() => {
+              touristLogin().then(() => {
+                navigate('/overview');
+              })
+            }}>
+              游客登录
+            </Button>
           </Row>
         </Form.Item>
       </Form>

@@ -3,7 +3,7 @@ import type { MenuProps } from "antd";
 import { pathToRegexp } from "path-to-regexp";
 import { toHump } from "@/utils/common";
 import { allIcons } from "@/utils/icons";
-import { IMenuListItem } from '@/api/menu';
+import { IMenuInfo } from '@/api/menu';
 
 type MenuItem = Required<MenuProps>["items"][number];
 interface IMenuProps {
@@ -122,7 +122,7 @@ export const modifyMenuData = (
   });
 };
 
-export const transformMenuList = (menuList: IMenuListItem[], menuData: ICustomMenuItem[]) => {
+export const transformMenuList = (menuList: IMenuInfo[], menuData: ICustomMenuItem[]) => {
   menuList.forEach((menu) => {
     const item: ICustomMenuItem= {
       label: menu.name,

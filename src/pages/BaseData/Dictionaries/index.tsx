@@ -142,12 +142,12 @@ const Dictionaries: React.FC = () => {
         <Form form={form} {...formItemLayout} onFinish={onFinish}>
           <Row>
             <Col span={6}>
-              <Form.Item label='名称' name='name'>
+              <Form.Item label='名称' name='qp-name-like'>
                 <Input />
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item label='code' name='code'>
+              <Form.Item label='code' name='qp-code-eq'>
                 <Input />
               </Form.Item>
             </Col>

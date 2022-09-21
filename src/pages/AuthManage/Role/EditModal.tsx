@@ -1,17 +1,7 @@
 import { updateRole, createRole } from '@/api/role';
 import { IRoleInfo } from '@/store/role';
 import { formItemLayout } from '@/utils/common';
-import {
-  Modal,
-  Form,
-  Input,
-  FormProps,
-  Row,
-  Space,
-  Button,
-  Select,
-  Radio,
-} from 'antd';
+import { Modal, Form, Input, FormProps, Row, Space, Button, Radio } from 'antd';
 import { useEffect } from 'react';
 import { IModalType } from '.';
 
@@ -40,14 +30,14 @@ const EditModal: React.FC<IEditModalProps> = (props) => {
 
   useEffect(() => {
     if (isModalOpen) {
-      if(isCreate || !data) {
+      if (isCreate || !data) {
         form.resetFields();
-      } else if(data){
+      } else if (data) {
         form.setFieldsValue(data);
       }
     }
   }, [isModalOpen, data]);
-  
+
   return (
     <Modal
       title={isView ? '查看' : isEdit ? '编辑' : '创建'}
@@ -77,7 +67,7 @@ const EditModal: React.FC<IEditModalProps> = (props) => {
           <Input />
         </Form.Item>
         <Form.Item
-          label='账号'
+          label='名称'
           name='name'
           rules={[{ required: true, message: '请输入角色名称' }]}
         >
@@ -89,6 +79,16 @@ const EditModal: React.FC<IEditModalProps> = (props) => {
           rules={[{ required: true, message: '请输入角色code' }]}
         >
           <Input />
+        </Form.Item>
+        <Form.Item
+          label='状态'
+          name='status'
+          rules={[{ required: true, message: '请选择' }]}
+        >
+          <Radio.Group>
+            <Radio value={1}>启用</Radio>
+            <Radio value={0}>禁用</Radio>
+          </Radio.Group>
         </Form.Item>
       </Form>
     </Modal>

@@ -57,15 +57,17 @@ const Sider: React.FC = () => {
       collapsed={collapsed}
     >
       <div className={styles.logo}></div>
-      <Menu
-        theme="dark"
-        mode="inline"
-        items={menuData}
-        onSelect={onMenuItemSelect}
-        onOpenChange={onOpenChange}
-        openKeys={openKeys}
-        selectedKeys={selectedKeys}
-      />
+      <div className={styles.menu}>
+        <Menu
+          theme="dark"
+          mode="inline"
+          items={menuData}
+          onSelect={onMenuItemSelect}
+          onOpenChange={onOpenChange}
+          openKeys={openKeys}
+          selectedKeys={selectedKeys}
+        />
+      </div>
     </ASider>
   );
 };

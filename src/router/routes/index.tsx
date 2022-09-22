@@ -11,6 +11,7 @@ import Menu from '@/pages/AuthManage/Resource/Menu';
 import ApiItem from '@/pages/AuthManage/Resource/ApiItem';
 import Dictionaries from '@/pages/BaseData/Dictionaries';
 import Tourist from '@/pages/AuthManage/Tourist';
+import LoginRecords from '@/pages/LoginRecords';
 
 const routes: RouteObject[] = [
   {
@@ -65,6 +66,15 @@ const routes: RouteObject[] = [
           {
             path: "/baseData/dictionaries",
             element: <Dictionaries />,
+          },
+        ],
+      },
+      {
+        path: "/system",
+        children: [
+          {
+            path: "/system/loginRecords",
+            element: <LoginRecords />,
           },
         ],
       },

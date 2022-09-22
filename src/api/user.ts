@@ -1,3 +1,4 @@
+import { IPagination } from '@/utils/typing';
 import { IUserLogin } from '@/store/global';
 import { IUserInfo, IUserPage, IUserParams } from '@/store/user';
 import axios from '@/utils/axios';
@@ -9,7 +10,6 @@ export const userCreate = async (data: IUserInfo) => {
 export const userRegister = async (data: IUserInfo) => {
   return axios.post<IUserInfo, IUserInfo>('/api/user/register', data);
 };
-
 
 export const userLogin = async (data: IUserLogin) => {
   return axios.post<IUserLogin, IUserInfo>('/api/user/login', data);
@@ -41,13 +41,13 @@ export const userUpdate = async (data: Omit<IUserInfo, 'password'>) => {
   return axios.post<IUserInfo, IUserInfo>('/api/user/update', data);
 };
 
-export const removeByIds = async (data: { ids: React.Key[]}) => {
+export const removeByIds = async (data: { ids: React.Key[] }) => {
   return axios.post('/api/user/removeByIds', data);
 };
 
 export const getCurrentUser = async () => {
   return axios.get<IUserInfo, IUserInfo>('/api/user/getCurrent');
-}
+};
 
 interface ITouristInfo {
   name: string;
@@ -58,4 +58,4 @@ interface ITouristInfo {
 }
 export const touristLogin = async () => {
   return axios.post<ITouristInfo, ITouristInfo>('/api/tourist/login');
-}
+};

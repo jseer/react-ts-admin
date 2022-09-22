@@ -14,7 +14,12 @@ import {
 } from 'antd';
 import { useAppDispatch, useAppSelector } from '@/hooks/store';
 import EditModal from './EditModal';
-import { formItemLayout, getDicItemLabel, getListItem, initPageInfo } from '@/utils/common';
+import {
+  formItemLayout,
+  getDicItemLabel,
+  getListItem,
+  initPageInfo,
+} from '@/utils/common';
 import { IRoleInfo, rolePageThunk } from '@/store/role';
 import { removeByIds } from '@/api/role';
 import useModal from '@/hooks/useModal';
@@ -104,8 +109,12 @@ const RoleList: React.FC = () => {
       render: (text: number) => {
         const color = ['red', 'green'][text];
         const textMap = ['禁用', '启用'];
-        return text == undefined ? '' : <Tag color={color}>{textMap[text]}</Tag>;
-      }
+        return text == undefined ? (
+          ''
+        ) : (
+          <Tag color={color}>{textMap[text]}</Tag>
+        );
+      },
     },
     {
       title: '操作',
@@ -118,7 +127,7 @@ const RoleList: React.FC = () => {
               onClick={() => {
                 showModal('edit', record);
               }}
-              size="small"
+              size='small'
             >
               编辑
             </Button>
@@ -127,7 +136,7 @@ const RoleList: React.FC = () => {
               onClick={() => {
                 showModal('view', record);
               }}
-              size="small"
+              size='small'
             >
               查看
             </Button>
@@ -136,7 +145,7 @@ const RoleList: React.FC = () => {
               onClick={() => {
                 showUserModal('edit', record);
               }}
-              size="small"
+              size='small'
             >
               分配用户
             </Button>
@@ -145,7 +154,7 @@ const RoleList: React.FC = () => {
               onClick={() => {
                 showResourceModal('edit', record);
               }}
-              size="small"
+              size='small'
             >
               分配资源
             </Button>
@@ -156,9 +165,13 @@ const RoleList: React.FC = () => {
   ];
 
   const removeRoles = async () => {
-    await removeByIds({ ids: selectedRowKeys });
-    message.success('删除成功');
-    getRolePage();
+    if (selectedRowKeys.length) {
+      await removeByIds({ ids: selectedRowKeys });
+      message.success('删除成功');
+      getRolePage();
+    } else {
+      message.info('请先勾选');
+    }
   };
   return (
     <div>
@@ -262,7 +275,7 @@ const RoleList: React.FC = () => {
         }}
         data={userModalData}
       />
-       <ResourceModal
+      <ResourceModal
         isModalOpen={isResourceModalOpen}
         handleCancel={() => {
           hideResourceModal();

@@ -132,9 +132,13 @@ const Dictionaries: React.FC = () => {
   ];
 
   const removeRoles = async () => {
-    await removeByIds({ ids: selectedRowKeys });
-    message.success('删除成功');
-    getDictionariesPage();
+    if (selectedRowKeys.length) {
+      await removeByIds({ ids: selectedRowKeys });
+      message.success('删除成功');
+      getDictionariesPage();
+    } else {
+      message.info('请先勾选');
+    }
   };
   return (
     <div>

@@ -11,10 +11,16 @@ import {
   Table,
   message,
   Tag,
+  Switch,
 } from 'antd';
 import EditModal from './EditModal';
 import { formItemLayout, getDicItemLabel } from '@/utils/common';
-import { IMenuInfo, getMenuList, removeByIds } from '@/api/menu';
+import {
+  IMenuInfo,
+  getMenuList,
+  removeByIds,
+  updateMenuStatus,
+} from '@/api/menu';
 import { useAppSelector } from '@/hooks/store';
 
 export type IModalType = 'create' | 'edit' | 'view';
@@ -28,7 +34,7 @@ const MenuList: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const { allDicItems } = useAppSelector((state) => ({
     allDicItems: state.global.allDicItems,
-  }))
+  }));
 
   const showModal = (type: IModalType, data: IMenuInfo | null) => {
     setIsModalOpen(true);
@@ -42,7 +48,6 @@ const MenuList: React.FC = () => {
     setModalData(null);
   };
 
- 
   const onFinish: FormProps['onFinish'] = () => {
     queryMenuList();
   };
@@ -54,7 +59,7 @@ const MenuList: React.FC = () => {
         ...form.getFieldsValue(),
       });
       setList(data);
-    } catch(e) {
+    } catch (e) {
       console.log(e);
     }
     setLoading(false);
@@ -85,7 +90,7 @@ const MenuList: React.FC = () => {
       key: 'type',
       render: (text: string) => {
         return getDicItemLabel(allDicItems.MENU_TYPE, text);
-      }
+      },
     },
     {
       title: '访问路径',
@@ -96,16 +101,33 @@ const MenuList: React.FC = () => {
       title: '状态',
       dataIndex: 'status',
       key: 'status',
-      render: (text: number) => {
-        const color = ['#f50', 'green'][text];
-        const textMap = ['禁用', '启用'];
-        return text ? <Tag color={color}>{textMap[text]}</Tag> : '';
-      }
+      render: (text: number, record: any) => {
+        const checked = text ? true : false;
+        return (
+          <Switch
+            checked={checked}
+            onChange={async () => {
+              await updateMenuStatus({
+                id: record.id,
+                status: checked ? 0 : 1,
+              });
+              queryMenuList();
+            }}
+          />
+        );
+      },
     },
     {
       title: '排序',
       dataIndex: 'sort',
       key: 'sort',
+    },
+    {
+      title: '子级数量',
+      key: 'count',
+      render: (record: any) => {
+        return record.children?.length;
+      },
     },
     {
       title: '操作',
@@ -115,7 +137,7 @@ const MenuList: React.FC = () => {
           <Space>
             <Button
               type='link'
-              size="small"
+              size='small'
               onClick={() => {
                 showModal('edit', record);
               }}
@@ -127,7 +149,7 @@ const MenuList: React.FC = () => {
               onClick={() => {
                 showModal('view', record);
               }}
-              size="small"
+              size='small'
             >
               查看
             </Button>
@@ -136,7 +158,7 @@ const MenuList: React.FC = () => {
               onClick={() => {
                 showModal('create', record);
               }}
-              size="small"
+              size='small'
               hidden={record.type === '2'}
             >
               添加菜单
@@ -148,9 +170,13 @@ const MenuList: React.FC = () => {
   ];
 
   const removeRoles = async () => {
-    await removeByIds({ ids: selectedRowKeys });
-    message.success('删除成功');
-    queryMenuList();
+    if (selectedRowKeys.length) {
+      await removeByIds({ ids: selectedRowKeys });
+      message.success('删除成功');
+      queryMenuList();
+    } else {
+      message.info('请先勾选');
+    }
   };
   return (
     <div>

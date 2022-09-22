@@ -11,10 +11,17 @@ import {
   Table,
   message,
   Tag,
+  Switch,
 } from 'antd';
 import EditModal from './EditModal';
-import { formItemLayout, getDicItemLabel, getListItem } from '@/utils/common';
-import { IApiItemInfo, getApiItemList, removeByIds } from '@/api/apiItem';
+import { formItemLayout, getDicItemLabel } from '@/utils/common';
+import {
+  IApiItemInfo,
+  getApiItemList,
+  removeByIds,
+  updateApiItemStatus,
+  updateApiItemCheckStatus,
+} from '@/api/apiItem';
 import { useAppSelector } from '@/hooks/store';
 
 export type IModalType = 'create' | 'edit' | 'view';
@@ -102,21 +109,20 @@ const ApiItemList: React.FC = () => {
       title: '状态',
       dataIndex: 'status',
       key: 'status',
-      render: (text: number, record: IApiItemInfo) => {
-        const color = ['red', 'green'][text];
-        const textMap = ['禁用', '启用'];
-        return (
-          record.type === '2' &&
-          (text == null ? '' : <Tag color={color}>{textMap[text]}</Tag>)
-        );
-      },
-    },
-    {
-      title: '是否校验',
-      dataIndex: 'needCheck',
-      key: 'needCheck',
       render: (text: number, record: any) => {
-        return record.type === '2' ? (text === 0 ? '否' : '是') : '';
+        const checked = text ? true : false;
+        return (
+          <Switch
+            checked={checked}
+            onChange={async () => {
+              await updateApiItemStatus({
+                id: record.id,
+                status: checked ? 0 : 1,
+              });
+              queryApiItemList();
+            }}
+          />
+        );
       },
     },
     {
@@ -124,7 +130,48 @@ const ApiItemList: React.FC = () => {
       dataIndex: 'needLogin',
       key: 'needLogin',
       render: (text: number, record: any) => {
-        return record.type === '2' ? (text === 0 ? '否' : '是') : '';
+        const checked = text ? true : false;
+        return record.type === '2' ? (
+          <Switch
+            checked={checked}
+            onChange={async () => {
+              await updateApiItemCheckStatus({
+                id: record.id,
+                type: 'needLogin',
+                status: checked ? 0 : 1,
+              });
+              queryApiItemList();
+            }}
+          />
+        ) : null;
+      },
+    },
+    {
+      title: '登录后校验',
+      dataIndex: 'needCheck',
+      key: 'needCheck',
+      render: (text: number, record: any) => {
+        const checked = text ? true : false;
+        return record.type === '2' ? (
+          <Switch
+            checked={checked}
+            onChange={async () => {
+              await updateApiItemCheckStatus({
+                id: record.id,
+                type: 'needCheck',
+                status: checked ? 0 : 1,
+              });
+              queryApiItemList();
+            }}
+          />
+        ) : null;
+      },
+    },
+    {
+      title: '子级数量',
+      key: 'count',
+      render: (record: any) => {
+        return record.children?.length;
       },
     },
     {
@@ -170,9 +217,13 @@ const ApiItemList: React.FC = () => {
   ];
 
   const removeRoles = async () => {
-    await removeByIds({ ids: selectedRowKeys });
-    message.success('删除成功');
-    queryApiItemList();
+    if(selectedRowKeys.length) {
+      await removeByIds({ ids: selectedRowKeys });
+      message.success('删除成功');
+      queryApiItemList();
+    } else {
+      message.info('请先勾选');
+    }
   };
   return (
     <div>

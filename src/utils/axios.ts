@@ -35,7 +35,7 @@ request.interceptors.response.use(
         });
         break;
     }
-    throw new Error(data);
+    return Promise.reject(data);
   },
   function (error) {
     // 对响应错误做点什么

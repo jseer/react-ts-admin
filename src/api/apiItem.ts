@@ -38,3 +38,11 @@ export const updateApiItem = async (data: IApiItemInfo) => {
 export const removeByIds = async (data: { ids: React.Key[]}) => {
   return axios.post('/api/apiItem/removeByIds', data);
 };
+
+export const updateApiItemStatus = async (data: { id: number; status: 1 | 0}) => {
+  return axios.post('/api/apiItem/updateStatus', data);
+};
+
+export const updateApiItemCheckStatus = async (data: { id: number; type: string; status: 1 | 0}) => {
+  return axios.post('/api/apiItem/updateCheckStatus', data);
+};

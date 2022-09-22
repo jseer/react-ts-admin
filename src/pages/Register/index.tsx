@@ -3,7 +3,8 @@ import styles from "./index.module.less";
 import { formItemLayout } from "@/utils/common";
 import { useNavigate } from 'react-router-dom';
 import { userRegisterThunk } from '@/store/user';
-import { useAppDispatch } from '@/hooks/store';
+import { useAppDispatch, useAppSelector } from '@/hooks/store';
+import { useEffect } from 'react';
 
 const tailFormItemLayout = {
   wrapperCol: {
@@ -21,10 +22,19 @@ const Register: React.FC = () => {
   const [form] = Form.useForm();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const { userInfo } = useAppSelector((state) => ({
+    userInfo: state.global.userInfo,
+  }));
   const onFinish: FormProps["onFinish"] = async (values) => {
     await dispatch(userRegisterThunk(values)).unwrap();
     navigate('/login?name='+ values.name);
   };
+
+  useEffect(() => {
+    if(userInfo) {
+      navigate('/overview');
+    }
+  }, [userInfo]);
 
   return (
     <div className={styles.register}>

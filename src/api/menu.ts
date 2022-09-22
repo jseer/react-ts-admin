@@ -44,3 +44,7 @@ export const updateMenu = async (data: IMenuInfo) => {
 export const removeByIds = async (data: { ids: React.Key[]}) => {
   return axios.post('/api/menu/removeByIds', data);
 };
+
+export const updateMenuStatus = async (data: { id: number; status: 1 | 0}) => {
+  return axios.post('/api/menu/updateStatus', data);
+};

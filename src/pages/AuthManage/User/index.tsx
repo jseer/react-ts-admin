@@ -107,7 +107,7 @@ const UserList: React.FC = () => {
       key: 'gender',
       render: (text: number) => {
         return text === 1 ? '男' : text === 2 ? '女' : '';
-      }
+      },
     },
     {
       title: '操作',
@@ -120,7 +120,7 @@ const UserList: React.FC = () => {
               onClick={() => {
                 showModal('edit', record);
               }}
-              size="small"
+              size='small'
             >
               编辑
             </Button>
@@ -129,7 +129,7 @@ const UserList: React.FC = () => {
               onClick={() => {
                 showModal('view', record);
               }}
-              size="small"
+              size='small'
             >
               查看
             </Button>
@@ -140,9 +140,13 @@ const UserList: React.FC = () => {
   ];
 
   const removeUsers = async () => {
-    await removeByIds({ ids: selectedRowKeys });
-    message.success('删除成功');
-    getUserPage();
+    if (selectedRowKeys.length) {
+      await removeByIds({ ids: selectedRowKeys });
+      message.success('删除成功');
+      getUserPage();
+    } else {
+      message.info('请先勾选');
+    }
   };
 
   useEffect(() => {

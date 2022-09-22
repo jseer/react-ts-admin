@@ -130,7 +130,7 @@ const EditModal: React.FC<IEditModalProps> = (props) => {
         <Form.Item dependencies={['type']} noStyle>
           {({ getFieldValue }) => {
             const type = getFieldValue('type');
-            if(type === '2') {
+            if (type === '2') {
               return (
                 <Form.Item
                   label='访问路径'
@@ -144,26 +144,18 @@ const EditModal: React.FC<IEditModalProps> = (props) => {
             return null;
           }}
         </Form.Item>
-        <Form.Item dependencies={['type']} noStyle>
-          {({ getFieldValue }) => {
-            const type = getFieldValue('type');
-            if(type === '2') {
-              return (
-                <Form.Item
-                  label='状态'
-                  name='status'
-                  rules={[{ required: true, message: '请选择' }]}
-                >
-                  <Radio.Group>
-                    <Radio value={1}>启用</Radio>
-                    <Radio value={0}>禁用</Radio>
-                  </Radio.Group>
-                </Form.Item>
-              );
-            }
-            return null;
-          }}
-        </Form.Item>
+        {isCreate && (
+          <Form.Item
+            label='状态'
+            name='status'
+            rules={[{ required: true, message: '请选择' }]}
+          >
+            <Radio.Group>
+              <Radio value={1}>启用</Radio>
+              <Radio value={0}>禁用</Radio>
+            </Radio.Group>
+          </Form.Item>
+        )}
       </Form>
     </Modal>
   );

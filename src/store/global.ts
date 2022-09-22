@@ -10,7 +10,6 @@ interface IInitialState {
   collapsed: boolean;
   openKeys: string[];
   selectedKeys: string[];
-  isLogin: boolean;
   userInfo: IUserInfo | null;
   allDicItems: IAllDictionaries;
   menuList: IMenuInfo[];
@@ -21,7 +20,6 @@ const initialState: IInitialState = {
   collapsed: false,
   openKeys: [],
   selectedKeys: [],
-  isLogin: false,
   userInfo: null,
   allDicItems: {},
   menuList: [],
@@ -35,9 +33,6 @@ const globalSlice = createSlice({
   reducers: {
     setUserInfo(state, { payload }: PayloadAction<IUserInfo>) {
       state.userInfo = payload;
-    },
-    setIsLogin(state, { payload }: PayloadAction<IInitialState['isLogin']>) {
-      state.isLogin = payload;
     },
     setCollapsed(
       state,
@@ -57,10 +52,8 @@ const globalSlice = createSlice({
   },
   extraReducers(builder) {
     builder.addCase(login.fulfilled, (state, {payload}) => {
-      state.isLogin = true;
       state.userInfo = payload;
     }).addCase(logout.fulfilled, (state) => {
-      state.isLogin = false;
       state.userInfo = null;
     }).addCase(getUserInfo.fulfilled, (state, { payload }) => {
       state.userInfo = payload;
@@ -81,6 +74,7 @@ const globalSlice = createSlice({
 export interface IUserLogin {
   name: string;
   password: string;
+  remember: boolean;
 }
 export const login = createAsyncThunk(
   'global/login',

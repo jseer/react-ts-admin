@@ -3,7 +3,7 @@ import styles from './index.module.less';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useEffect } from 'react';
-import { useAppDispatch } from '@/hooks/store';
+import { useAppDispatch, useAppSelector } from '@/hooks/store';
 import { login } from '@/store/global';
 import { touristLogin } from '@/api/user';
 
@@ -12,9 +12,12 @@ const Login: React.FC = () => {
   const [search] = useSearchParams();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const { userInfo } = useAppSelector((state) => ({
+    userInfo: state.global.userInfo,
+  }));
   const onFinish: FormProps['onFinish'] = async (values) => {
     await dispatch(login(values)).unwrap();
-    navigate('/');
+    navigate('/overview');
   };
 
   useEffect(() => {
@@ -22,6 +25,12 @@ const Login: React.FC = () => {
       name: search.get('name'),
     });
   }, [form, search]);
+
+  useEffect(() => {
+    if(userInfo) {
+      navigate('/overview');
+    }
+  }, [userInfo]);
   return (
     <div className={styles.login}>
       <h1 className={styles.title}>Hi, React-Ts-Admin</h1>
@@ -51,14 +60,8 @@ const Login: React.FC = () => {
             placeholder='请输入密码'
           />
         </Form.Item>
-        <Form.Item>
-          <Form.Item name='remember' valuePropName='checked' noStyle>
-            <Checkbox>Remember me</Checkbox>
-          </Form.Item>
-
-          <a className={styles.forgot} href=''>
-            Forgot password
-          </a>
+        <Form.Item name='remember' valuePropName='checked' noStyle>
+          <Checkbox>今天内记住你</Checkbox>
         </Form.Item>
 
         <Form.Item>

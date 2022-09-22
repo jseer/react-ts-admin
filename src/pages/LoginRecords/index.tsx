@@ -9,25 +9,27 @@ import {
   Space,
   FormProps,
   Table,
+  Select,
 } from 'antd';
-import { getTouristPage, ITouristInfo } from '@/api/tourist';
 import { formItemLayout, initPageInfo } from '@/utils/common';
+import { getLoginRecords, ILoginRecordInfo } from '@/api/system';
 
-const TouristList: React.FC = () => {
+const { Option } = Select;
+const LoginRecords: React.FC = () => {
   const [form] = Form.useForm();
-  const [list, setList] = useState<ITouristInfo[]>([]);
+  const [list, setList] = useState<ILoginRecordInfo[]>([]);
   const [loading, setLoading] = useState(false);
   const [pageInfo, setPageInfo] = useState({...initPageInfo});
   const [total, setTotal] = useState(0);
   const onFinish: FormProps['onFinish'] = () => {
-    queryTouristPage();
+    queryRecordsPage();
   };
 
-  const queryTouristPage = async () => {
+  const queryRecordsPage = async () => {
     try {
       setLoading(true);
       const formValues = form.getFieldsValue();
-      const data = await getTouristPage({
+      const data = await getLoginRecords({
           ...formValues,
           ...pageInfo,
         });
@@ -39,7 +41,7 @@ const TouristList: React.FC = () => {
     setLoading(false);
   };
   useEffect(() => {
-    queryTouristPage();
+    queryRecordsPage();
   }, [pageInfo]);
 
   const columns = [
@@ -52,6 +54,14 @@ const TouristList: React.FC = () => {
       title: '名称',
       dataIndex: 'name',
       key: 'name',
+    },
+    {
+      title: '登录方式',
+      dataIndex: 'type',
+      key: 'type',
+      render: (text: string) => {
+        return { account: '账号', tourist: '游客'}[text];
+      }
     },
     {
       title: 'Ip',
@@ -80,23 +90,36 @@ const TouristList: React.FC = () => {
       <Card bordered={false} style={{ marginBottom: 20 }}>
         <Form form={form} {...formItemLayout} onFinish={onFinish}>
           <Row>
-            <Col span={8}>
+          <Col span={6}>
+              <Form.Item label='名称' name='qp-name-like'>
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col span={6}>
+              <Form.Item label='登录方式' name='qp-type-eq'>
+                <Select>
+                  <Option value={'account'}>账号</Option>
+                  <Option value={'tourist'}>游客</Option>
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col span={6}>
               <Form.Item label='ip' name='qp-name-eq'>
                 <Input />
               </Form.Item>
             </Col>
-            <Col span={8}>
+            <Col span={6}>
               <Form.Item label='国家' name='qp-country-like'>
                 <Input />
               </Form.Item>
             </Col>
-            <Col span={8}>
+            <Col span={6}>
               <Form.Item label='省' name='qp-province-like'>
                 <Input />
               </Form.Item>
             </Col>
           
-            <Col span={8}>
+            <Col span={6}>
               <Form.Item label='市' name='qp-city-like'>
                 <Input />
               </Form.Item>
@@ -142,4 +165,4 @@ const TouristList: React.FC = () => {
   );
 };
 
-export default TouristList;
+export default LoginRecords;

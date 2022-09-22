@@ -164,67 +164,63 @@ const EditModal: React.FC<IEditModalProps> = (props) => {
             return null;
           }}
         </Form.Item>
-        <Form.Item dependencies={['type']} noStyle>
-          {({ getFieldValue }) => {
-            const type = getFieldValue('type');
-            if (type === '2') {
-              return (
-                <Form.Item
-                  label='是否登录'
-                  name='needLogin'
-                  rules={[{ required: true, message: '请选择' }]}
-                >
-                  <Radio.Group>
-                    <Radio value={1}>是</Radio>
-                    <Radio value={0}>否</Radio>
-                  </Radio.Group>
-                </Form.Item>
-              );
-            }
-            return null;
-          }}
-        </Form.Item>
-        <Form.Item dependencies={['type', 'needLogin']} noStyle>
-          {({ getFieldValue }) => {
-            const type = getFieldValue('type');
-            const needLogin = getFieldValue('needLogin');
-            if (type === '2' && needLogin) {
-              return (
-                <Form.Item
-                  label='是否校验'
-                  name='needCheck'
-                  rules={[{ required: true, message: '请选择' }]}
-                >
-                  <Radio.Group>
-                    <Radio value={1}>是</Radio>
-                    <Radio value={0}>否</Radio>
-                  </Radio.Group>
-                </Form.Item>
-              );
-            }
-            return null;
-          }}
-        </Form.Item>
-        <Form.Item dependencies={['type']} noStyle>
-          {({ getFieldValue }) => {
-            const type = getFieldValue('type');
-            if (type === '2') {
-              return (
-                <Form.Item
-                  label='状态'
-                  name='status'
-                  rules={[{ required: true, message: '请选择' }]}
-                >
-                  <Radio.Group>
-                    <Radio value={1}>启用</Radio>
-                    <Radio value={0}>禁用</Radio>
-                  </Radio.Group>
-                </Form.Item>
-              );
-            }
-            return null;
-          }}
-        </Form.Item>
+        {isCreate && (
+          <Form.Item dependencies={['type']} noStyle>
+            {({ getFieldValue }) => {
+              const type = getFieldValue('type');
+              if (type === '2') {
+                return (
+                  <Form.Item
+                    label='是否登录'
+                    name='needLogin'
+                    rules={[{ required: true, message: '请选择' }]}
+                  >
+                    <Radio.Group>
+                      <Radio value={1}>是</Radio>
+                      <Radio value={0}>否</Radio>
+                    </Radio.Group>
+                  </Form.Item>
+                );
+              }
+              return null;
+            }}
+          </Form.Item>
+        )}
+        {isCreate && (
+          <Form.Item dependencies={['type', 'needLogin']} noStyle>
+            {({ getFieldValue }) => {
+              const type = getFieldValue('type');
+              const needLogin = getFieldValue('needLogin');
+              if (type === '2' && needLogin) {
+                return (
+                  <Form.Item
+                    label='登录后校验'
+                    name='needCheck'
+                    rules={[{ required: true, message: '请选择' }]}
+                  >
+                    <Radio.Group>
+                      <Radio value={1}>是</Radio>
+                      <Radio value={0}>否</Radio>
+                    </Radio.Group>
+                  </Form.Item>
+                );
+              }
+              return null;
+            }}
+          </Form.Item>
+        )}
+        {isCreate && (
+          <Form.Item
+            label='状态'
+            name='status'
+            rules={[{ required: true, message: '请选择' }]}
+          >
+            <Radio.Group>
+              <Radio value={1}>启用</Radio>
+              <Radio value={0}>禁用</Radio>
+            </Radio.Group>
+          </Form.Item>
+        )}
       </Form>
     </Modal>
   );

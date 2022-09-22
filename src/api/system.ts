@@ -4,6 +4,7 @@ import { ITouristInfo } from './tourist';
 
 export interface ILoginRecordInfo extends ITouristInfo {
   type: 'account' | 'tourist';
+  loginTime: string;
 }
 interface ILoginRecordsPage extends IPagination {
   list: ILoginRecordInfo[];

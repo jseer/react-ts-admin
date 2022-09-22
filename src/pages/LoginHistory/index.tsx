@@ -9,17 +9,15 @@ import {
   Space,
   FormProps,
   Table,
-  Select,
 } from 'antd';
 import { formItemLayout, initPageInfo } from '@/utils/common';
-import { getLoginRecords, ILoginRecordInfo } from '@/api/system';
+import { getLoginHistory, ILoginHistoryInfo } from '@/api/user';
 
-const { Option } = Select;
-const LoginRecords: React.FC = () => {
+const LoginHistory: React.FC = () => {
   const [form] = Form.useForm();
-  const [list, setList] = useState<ILoginRecordInfo[]>([]);
+  const [list, setList] = useState<ILoginHistoryInfo[]>([]);
   const [loading, setLoading] = useState(false);
-  const [pageInfo, setPageInfo] = useState({...initPageInfo});
+  const [pageInfo, setPageInfo] = useState({ ...initPageInfo });
   const [total, setTotal] = useState(0);
   const onFinish: FormProps['onFinish'] = () => {
     queryRecordsPage();
@@ -29,13 +27,13 @@ const LoginRecords: React.FC = () => {
     try {
       setLoading(true);
       const formValues = form.getFieldsValue();
-      const data = await getLoginRecords({
-          ...formValues,
-          ...pageInfo,
-        });
+      const data = await getLoginHistory({
+        ...formValues,
+        ...pageInfo,
+      });
       setList(data.list);
       setTotal(data.total);
-    } catch(e) {
+    } catch (e) {
       console.log(e);
     }
     setLoading(false);
@@ -56,12 +54,9 @@ const LoginRecords: React.FC = () => {
       key: 'name',
     },
     {
-      title: '登录方式',
-      dataIndex: 'type',
-      key: 'type',
-      render: (text: string) => {
-        return { account: '账号', tourist: '游客'}[text];
-      }
+      title: '登录时间',
+      dataIndex: 'loginTime',
+      key: 'loginTime',
     },
     {
       title: 'Ip',
@@ -90,17 +85,9 @@ const LoginRecords: React.FC = () => {
       <Card bordered={false} style={{ marginBottom: 20 }}>
         <Form form={form} {...formItemLayout} onFinish={onFinish}>
           <Row>
-          <Col span={6}>
+            <Col span={6}>
               <Form.Item label='名称' name='qp-name-like'>
                 <Input />
-              </Form.Item>
-            </Col>
-            <Col span={6}>
-              <Form.Item label='登录方式' name='qp-type-eq'>
-                <Select>
-                  <Option value={'account'}>账号</Option>
-                  <Option value={'tourist'}>游客</Option>
-                </Select>
               </Form.Item>
             </Col>
             <Col span={6}>
@@ -118,7 +105,7 @@ const LoginRecords: React.FC = () => {
                 <Input />
               </Form.Item>
             </Col>
-          
+
             <Col span={6}>
               <Form.Item label='市' name='qp-city-like'>
                 <Input />
@@ -165,4 +152,4 @@ const LoginRecords: React.FC = () => {
   );
 };
 
-export default LoginRecords;
+export default LoginHistory;

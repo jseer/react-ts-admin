@@ -2,6 +2,7 @@ import { IPagination } from '@/utils/typing';
 import { IUserLogin } from '@/store/global';
 import { IUserInfo, IUserPage, IUserParams } from '@/store/user';
 import axios from '@/utils/axios';
+import { ILoginRecordInfo } from './system';
 
 export const userCreate = async (data: IUserInfo) => {
   return axios.post<IUserInfo, IUserInfo>('/api/user/create', data);
@@ -58,4 +59,19 @@ interface ITouristInfo {
 }
 export const touristLogin = async () => {
   return axios.post<ITouristInfo, ITouristInfo>('/api/tourist/login');
+};
+
+export interface ILoginHistoryInfo extends Omit<ILoginRecordInfo, 'type'> {
+  
+}
+interface ILoginHistoryPage extends IPagination {
+  list: ILoginHistoryInfo[];
+}
+export const getLoginHistory = async (params: any) => {
+  return axios.get<ILoginHistoryPage, ILoginHistoryPage>(
+    '/api/user/getLoginHistory',
+    {
+      params,
+    }
+  );
 };

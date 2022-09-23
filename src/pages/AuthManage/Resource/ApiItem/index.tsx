@@ -280,6 +280,7 @@ const ApiItemList: React.FC = () => {
           columns={columns}
           scroll={{ x: 'max-content' }}
           rowKey='id'
+          expandable={{ defaultExpandAllRows: true }}
           rowSelection={{
             checkStrictly: false,
             selectedRowKeys,

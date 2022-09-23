@@ -232,6 +232,7 @@ const MenuList: React.FC = () => {
           dataSource={list}
           columns={columns}
           rowKey='id'
+          expandable={{ defaultExpandAllRows: true }}
           rowSelection={{
             checkStrictly: false,
             selectedRowKeys,

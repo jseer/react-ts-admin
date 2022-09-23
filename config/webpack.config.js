@@ -324,7 +324,7 @@ module.exports = function (webpackEnv) {
             },
             stable: {
               name: 'stable',
-              test: /[\\/]node_modules[\\/](react[\\/]|react-dom|dayjs|@reduxjs|immer|react-router|react-router-dom)/,
+              test: /[\\/]node_modules[\\/](react[\\/]|react-dom|@reduxjs|immer|react-router|react-router-dom)/,
               reuseExistingChunk: true,
               priority: 30,
               chunks: 'all',

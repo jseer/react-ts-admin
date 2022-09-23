@@ -38,7 +38,7 @@ const Login: React.FC = () => {
         form={form}
         name='login'
         className={styles.form}
-        initialValues={{ remember: true }}
+        initialValues={{ remember: false }}
         onFinish={onFinish}
       >
         <Form.Item

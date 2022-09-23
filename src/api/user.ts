@@ -75,3 +75,12 @@ export const getLoginHistory = async (params: any) => {
     }
   );
 };
+
+export const validateByNameOrEmail = async (params: any) => {
+  return axios.get<IUserInfo, IUserInfo>(
+    '/api/user/validateByNameOrEmail',
+    {
+      params,
+    }
+  );
+};

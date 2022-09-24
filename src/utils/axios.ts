@@ -4,7 +4,7 @@ import { history } from '@/router';
 
 const request = axios.create({
   withCredentials: true,
-  baseURL: 'http://localhost:7001',
+  baseURL: process.env.NODE_ENV === 'development' ? 'http://localhost:7001' : undefined,
 });
 // 添加请求拦截器
 request.interceptors.request.use(

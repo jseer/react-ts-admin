@@ -5,6 +5,7 @@ import { createLogger } from 'redux-logger';
 import userSlice from './user';
 import roleSlice from './role';
 
+const isDev = process.env.NODE_ENV === 'development';
 const store = configureStore({
   reducer: {
     [globalSlice.name]: globalSlice.reducer,
@@ -16,13 +17,12 @@ const store = configureStore({
       serializableCheck: false,
       immutableCheck: false,
     });
-    if (process.env.NODE_ENV === 'development') {
+    if (isDev) {
       return middleware.prepend(createLogger());
     }
     return middleware;
   },
-  devTools:
-    process.env.NODE_ENV === 'development' || getItem('devTools') === true,
+  devTools: isDev || getItem('devTools') === true,
 });
 
 export type RootState = ReturnType<typeof store.getState>;

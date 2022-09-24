@@ -148,8 +148,8 @@ const ApiItemList: React.FC = () => {
     },
     {
       title: '登录后校验',
-      dataIndex: 'needCheck',
-      key: 'needCheck',
+      dataIndex: 'needLoginCheck',
+      key: 'needLoginCheck',
       render: (text: number, record: any) => {
         const checked = text ? true : false;
         return record.type === '2' ? (
@@ -158,7 +158,7 @@ const ApiItemList: React.FC = () => {
             onChange={async () => {
               await updateApiItemCheckStatus({
                 id: record.id,
-                type: 'needCheck',
+                type: 'needLoginCheck',
                 status: checked ? 0 : 1,
               });
               queryApiItemList();

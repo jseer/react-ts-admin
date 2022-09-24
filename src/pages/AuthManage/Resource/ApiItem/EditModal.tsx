@@ -94,7 +94,7 @@ const EditModal: React.FC<IEditModalProps> = (props) => {
         disabled={isView}
         initialValues={{
           needLogin: 1,
-          needCheck: 0,
+          needLoginCheck: 0,
         }}
       >
         <Form.Item name='id' hidden>
@@ -195,7 +195,7 @@ const EditModal: React.FC<IEditModalProps> = (props) => {
                 return (
                   <Form.Item
                     label='登录后校验'
-                    name='needCheck'
+                    name='needLoginCheck'
                     rules={[{ required: true, message: '请选择' }]}
                   >
                     <Radio.Group>

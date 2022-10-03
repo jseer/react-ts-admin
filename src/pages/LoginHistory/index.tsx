@@ -44,11 +44,6 @@ const LoginHistory: React.FC = () => {
 
   const columns = [
     {
-      title: 'ID',
-      dataIndex: 'id',
-      key: 'id',
-    },
-    {
       title: '名称',
       dataIndex: 'name',
       key: 'name',

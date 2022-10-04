@@ -17,3 +17,26 @@ export const getLoginRecords = async (params: any) => {
     }
   );
 };
+
+export const getContinuousLoginDays = async () => {
+  return axios.get<number, number>(
+    '/api/system/continuousLoginDays',
+  );
+};
+
+export interface ICountMap {
+  newUser: number;
+  tourist: number;
+  login: number;
+  userTotal: number;
+}
+
+export type ICountType = 'today' | 'week' | 'month';
+export const getCountMap = async (type: ICountType) => {
+  return axios.get<ICountMap, ICountMap>(
+    '/api/system/getCountMap',
+    {
+      params: { type }
+    }
+  );
+};

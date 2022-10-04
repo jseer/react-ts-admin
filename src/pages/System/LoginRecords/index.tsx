@@ -11,7 +11,7 @@ import {
   Table,
   Select,
 } from 'antd';
-import { formItemLayout, initPageInfo } from '@/utils/common';
+import { formItemLayout, initPageInfo, USER_TYPE } from '@/utils/common';
 import { getLoginRecords, ILoginRecordInfo } from '@/api/system';
 
 const { Option } = Select;
@@ -98,8 +98,8 @@ const LoginRecords: React.FC = () => {
             <Col span={6}>
               <Form.Item label='登录方式' name='qp-type-eq'>
                 <Select>
-                  <Option value={'account'}>账号</Option>
-                  <Option value={'tourist'}>游客</Option>
+                  <Option value={USER_TYPE.ACCOUNT}>账号</Option>
+                  <Option value={USER_TYPE.TOURIST}>游客</Option>
                 </Select>
               </Form.Item>
             </Col>

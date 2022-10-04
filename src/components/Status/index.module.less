@@ -1,0 +1,26 @@
+@import "@/variable.less";
+
+.status {
+  display: flex;
+  align-items: center;
+  .dot {
+    width: 8px;
+    height: 8px;
+    margin-right: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    &.success {
+      background: @success-color;
+    }
+    &.error {
+      background: @error-color;
+    }
+    &.warning {
+      background: @warning-color;
+    }
+  }
+  .text {
+    word-wrap: break-word;
+    word-break: break-all;
+  }
+}

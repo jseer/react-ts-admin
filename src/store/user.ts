@@ -43,7 +43,8 @@ export interface IUserInfo {
   email: string;
   password: string;
   gender: 1 | 2;
-  roles?: IRoleInfo[],
+  roles?: IRoleInfo[];
+  type: 'account' | 'tourist';
 }
 export const userCreateThunk = createAsyncThunk(
   'user/create',

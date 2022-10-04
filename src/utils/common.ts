@@ -75,3 +75,8 @@ export const loopMenuList2PageList = (menuList: IMenuInfo[], pageList: IMenuInfo
     }
   })
 }
+
+export enum USER_TYPE {
+  ACCOUNT='account',
+  TOURIST='tourist',
+}

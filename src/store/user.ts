@@ -3,7 +3,6 @@ import { IRoleInfo } from './role';
 import { userCreate, userPage } from '@/api/user';
 import { IPagination } from '@/utils/typing';
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import md5 from 'crypto-js/md5';
 
 export interface IUserState {
   userList: IUserInfo[];
@@ -57,8 +56,6 @@ export const userCreateThunk = createAsyncThunk(
 export const userRegisterThunk = createAsyncThunk(
   'user/register',
   async (params: IUserInfo) => {
-    // TODO:
-    // params.password = md5(params.password).toString();
     const result = await userRegister(params);
     return result;
   }

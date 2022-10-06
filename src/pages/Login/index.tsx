@@ -2,13 +2,15 @@ import { Button, Checkbox, Form, Input, FormProps, Row } from 'antd';
 import styles from './index.module.less';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@/hooks/store';
 import { login } from '@/store/global';
-import { touristLogin } from '@/api/user';
+import { getPublicKey, touristLogin } from '@/api/user';
+import JSEncrypt from 'jsencrypt';
 
 const Login: React.FC = () => {
   const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
   const [search] = useSearchParams();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -16,8 +18,18 @@ const Login: React.FC = () => {
     userInfo: state.global.userInfo,
   }));
   const onFinish: FormProps['onFinish'] = async (values) => {
-    await dispatch(login(values)).unwrap();
-    navigate('/overview');
+    try {
+      setLoading(true);
+      const { publicKey } = await getPublicKey();
+      const encrypt = new JSEncrypt();
+      encrypt.setPublicKey(publicKey);
+      values.password = encrypt.encrypt(values.password);
+      await dispatch(login(values)).unwrap();
+      navigate('/overview');
+    } catch(e) {
+      console.log(e);
+    }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -65,7 +77,7 @@ const Login: React.FC = () => {
         </Form.Item>
 
         <Form.Item>
-          <Button type='primary' htmlType='submit' className={styles.loginBtn}>
+          <Button type='primary' htmlType='submit' loading={loading} className={styles.loginBtn}>
             登录
           </Button>
           <Row justify='space-between'>

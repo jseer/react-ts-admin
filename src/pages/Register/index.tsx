@@ -5,7 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import { userRegisterThunk } from '@/store/user';
 import { useAppDispatch, useAppSelector } from '@/hooks/store';
 import { useEffect } from 'react';
-import { validateByNameOrEmail } from '@/api/user';
+import { getPublicKey, validateByNameOrEmail } from '@/api/user';
+import JSEncrypt from 'jsencrypt';
 
 const tailFormItemLayout = {
   wrapperCol: {
@@ -27,8 +28,13 @@ const Register: React.FC = () => {
     userInfo: state.global.userInfo,
   }));
   const onFinish: FormProps['onFinish'] = async (values) => {
-    await dispatch(userRegisterThunk(values)).unwrap();
-    navigate('/login?name=' + values.name);
+    const { publicKey } = await getPublicKey();
+    const encrypt = new JSEncrypt();
+    encrypt.setPublicKey(publicKey);
+    const { confirm, ...params } = values;
+    params.password = encrypt.encrypt(params.password);
+    await dispatch(userRegisterThunk(params)).unwrap();
+    navigate('/login?name=' + params.name);
   };
 
   useEffect(() => {

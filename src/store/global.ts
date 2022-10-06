@@ -3,7 +3,6 @@ import { getAllDictionaries, IAllDictionaries } from '@/api/dictionaries';
 import { userLogin, userLogout, getCurrentUser, ITouristInfo } from '@/api/user';
 import { IUserInfo } from '@/store/user';
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import md5 from 'crypto-js/md5';
 import { loopMenuList2PageList } from '@/utils/common';
 
 interface IInitialState {
@@ -79,8 +78,6 @@ export interface IUserLogin {
 export const login = createAsyncThunk(
   'global/login',
   async (params: IUserLogin) => {
-    // TODO:
-    // params.password = md5(params.password).toString();
     const result = await userLogin(params);
     return result;
   }

@@ -82,3 +82,10 @@ export const validateByNameOrEmail = async (params: any) => {
     }
   );
 };
+
+interface ICryptoInfo {
+  publicKey: string;
+}
+export const getPublicKey = async () => {
+  return axios.get<ICryptoInfo, ICryptoInfo>('/api/common/rsa/public');
+};

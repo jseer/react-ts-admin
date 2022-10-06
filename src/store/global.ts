@@ -1,6 +1,6 @@
 import { getAuthMenuList, IMenuInfo } from '@/api/menu';
 import { getAllDictionaries, IAllDictionaries } from '@/api/dictionaries';
-import { userLogin, userLogout, getCurrentUser } from '@/api/user';
+import { userLogin, userLogout, getCurrentUser, ITouristInfo } from '@/api/user';
 import { IUserInfo } from '@/store/user';
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import md5 from 'crypto-js/md5';
@@ -10,7 +10,7 @@ interface IInitialState {
   collapsed: boolean;
   openKeys: string[];
   selectedKeys: string[];
-  userInfo: IUserInfo | null;
+  userInfo: IUserInfo | ITouristInfo | null;
   allDicItems: IAllDictionaries;
   menuList: IMenuInfo[];
   authPageList: IMenuInfo[];
@@ -79,7 +79,8 @@ export interface IUserLogin {
 export const login = createAsyncThunk(
   'global/login',
   async (params: IUserLogin) => {
-    params.password = md5(params.password).toString();
+    // TODO:
+    // params.password = md5(params.password).toString();
     const result = await userLogin(params);
     return result;
   }

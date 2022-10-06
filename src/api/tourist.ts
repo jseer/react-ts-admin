@@ -10,7 +10,7 @@ export interface ITouristInfo {
 }
 
 export const touristLogin = async () => {
-  return axios.post<ITouristInfo, ITouristInfo>('/api/tourist/login');
+  return axios.post<ITouristInfo, ITouristInfo>('/api/user/touristLogin');
 }
 
 export interface ITouristPage extends IPagination {

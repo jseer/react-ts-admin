@@ -57,7 +57,8 @@ export const userCreateThunk = createAsyncThunk(
 export const userRegisterThunk = createAsyncThunk(
   'user/register',
   async (params: IUserInfo) => {
-    params.password = md5(params.password).toString();
+    // TODO:
+    // params.password = md5(params.password).toString();
     const result = await userRegister(params);
     return result;
   }

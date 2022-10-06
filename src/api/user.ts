@@ -47,19 +47,17 @@ export const removeByIds = async (data: { ids: React.Key[] }) => {
 };
 
 export const getCurrentUser = async () => {
-  return axios.get<IUserInfo, IUserInfo>('/api/user/getCurrent');
+  return axios.get<IUserInfo | ITouristInfo, IUserInfo | ITouristInfo>('/api/user/getCurrent');
 };
 
-interface ITouristInfo {
+export interface ITouristInfo {
   name: string;
-  ip: string;
-  country: string;
-  province: string;
-  city: string;
+  type: 'account' | 'tourist';
 }
+
 export const touristLogin = async () => {
-  return axios.post<ITouristInfo, ITouristInfo>('/api/tourist/login');
-};
+  return axios.post<ITouristInfo, ITouristInfo>('/api/user/touristLogin');
+}
 
 export interface ILoginHistoryInfo extends Omit<ILoginRecordInfo, 'type'> {
   

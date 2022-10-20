@@ -99,7 +99,7 @@ const Overview: React.FC = () => {
       <Card>
         <Row>
           <Col span={12}>
-            <CountCharts/>
+            {/* <CountCharts/> */}
           </Col>
           <Col span={12}></Col>
         </Row>

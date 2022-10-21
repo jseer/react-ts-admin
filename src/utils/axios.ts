@@ -1,15 +1,18 @@
+import { globalActions } from '@/store/global';
+import { getItem } from 'src/utils/common';
 import axios from 'axios';
 import { notification } from 'antd';
 import { history } from '@/router';
+import store from '@/store';
 
 const request = axios.create({
   withCredentials: true,
   baseURL: process.env.NODE_ENV === 'development' ? 'http://localhost:7001' : undefined,
 });
+request.defaults.headers.common['x-super-user'] = getItem('x-super-user', '');
 // 添加请求拦截器
 request.interceptors.request.use(
   function (config) {
-    // 在发送请求之前做些什么
     return config;
   },
   function (error) {
@@ -27,6 +30,7 @@ request.interceptors.response.use(
       case 200:
         return data.data;
       case 401:
+        store.dispatch(globalActions.setUserInfo(null));
         history.push('/login');
       default:
         notification.error({

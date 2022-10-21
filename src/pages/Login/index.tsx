@@ -59,7 +59,7 @@ const Login: React.FC = () => {
         >
           <Input
             prefix={<UserOutlined className='site-form-item-icon' />}
-            placeholder='请输入用户名'
+            placeholder='管理员账号: admin'
           />
         </Form.Item>
         <Form.Item
@@ -69,7 +69,7 @@ const Login: React.FC = () => {
           <Input
             prefix={<LockOutlined className='site-form-item-icon' />}
             type='password'
-            placeholder='请输入密码'
+            placeholder='管理员密码: admin'
           />
         </Form.Item>
         <Form.Item name='remember' valuePropName='checked' noStyle>

@@ -30,7 +30,7 @@ const globalSlice = createSlice({
   name: "global",
   initialState,
   reducers: {
-    setUserInfo(state, { payload }: PayloadAction<IUserInfo>) {
+    setUserInfo(state, { payload }: PayloadAction<IInitialState["userInfo"]>) {
       state.userInfo = payload;
     },
     setCollapsed(

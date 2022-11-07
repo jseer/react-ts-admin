@@ -1,0 +1,33 @@
+name: latest
+
+env:
+    DOCKER_IMAGE: ${{secrets.REGISTRY_URL}}/${{secrets.NAMESPACE}}/react-ts-admin:latest
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v3.5.1
+      with:
+        node-version: 16
+        cache: npm
+        registry-url: https://registry.npm.taobao.org
+    - name: install && build
+      run: |
+        npm install
+        npm run build
+    - name: Build the Docker image
+      run: | 
+        docker build . --file Dockerfile --tag ${{env.DOCKER_IMAGE}}
+        docker login --username=${{secrets.REGISTRY_USERNAME}} --password=${{secrets.REGISTRY_PASSWORD}} ${{secrets.REGISTRY_URL}}
+        docker push ${{env.DOCKER_IMAGE}}

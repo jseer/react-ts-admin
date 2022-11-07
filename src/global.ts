@@ -5,4 +5,3 @@ ConfigProvider.config({
   prefixCls: 'admin',
   iconPrefixCls: 'adminicon',
 });
-

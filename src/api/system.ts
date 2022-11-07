@@ -40,3 +40,9 @@ export const getCountMap = async (type: ICountType) => {
     }
   );
 };
+
+export const initData = async () => {
+  return axios.post(
+    '/api/system/initData',
+  );
+};

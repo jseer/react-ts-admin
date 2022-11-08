@@ -90,6 +90,7 @@ function getClientEnvironment(publicUrl) {
         FAST_REFRESH: process.env.FAST_REFRESH !== 'false',
         
         BUILT_TYPE: process.env.BUILT_TYPE,
+        BASE_URL: process.env.BASE_URL
       }
     );
   // Stringify all values so we can feed into webpack DefinePlugin

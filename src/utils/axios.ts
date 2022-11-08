@@ -10,7 +10,7 @@ const request = axios.create({
   baseURL:
     process.env.NODE_ENV === 'development'
       ? 'http://localhost:7001'
-      : undefined,
+      : process.env.BASE_URL,
 });
 // 添加请求拦截器
 request.interceptors.request.use(

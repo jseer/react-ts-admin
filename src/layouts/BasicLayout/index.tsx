@@ -13,7 +13,7 @@ const BasicLayout: React.FC = () => {
   const navigate = useNavigate();
   useEffect(() => {
     dispatch(getUserInfo()).unwrap().catch(() => {
-      store.dispatch(globalActions.setUserInfo(null));
+      store.dispatch(globalActions.resetState());
       navigate('/login');
     });
     dispatch(getAllDictionariesThunk());

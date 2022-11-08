@@ -32,7 +32,7 @@ request.interceptors.response.use(
       case 200:
         return data.data;
       case 401:
-        store.dispatch(globalActions.setUserInfo(null));
+        store.dispatch(globalActions.resetState());
         history.push('/login');
       default:
         notification.error({

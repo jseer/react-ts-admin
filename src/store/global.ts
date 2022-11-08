@@ -48,12 +48,18 @@ const globalSlice = createSlice({
     ) {
       state.selectedKeys = payload;
     },
+    resetState(state) {
+      state.openKeys = [];
+      state.selectedKeys = [];
+      state.userInfo = null;
+      state.menuList = [];
+      state.authPageList = [];
+      state.authPageListLoading = true;
+    },
   },
   extraReducers(builder) {
     builder.addCase(login.fulfilled, (state, {payload}) => {
       state.userInfo = payload;
-    }).addCase(logout.fulfilled, (state) => {
-      state.userInfo = null;
     }).addCase(getUserInfo.fulfilled, (state, { payload }) => {
       state.userInfo = payload;
     }).addCase(getAllDictionariesThunk.fulfilled, (state, { payload }) => {
@@ -85,8 +91,9 @@ export const login = createAsyncThunk(
 
 export const logout = createAsyncThunk(
   'global/logout',
-  async () => {
+  async (params, { dispatch }) => {
     await userLogout();
+    dispatch(globalActions.resetState());
   }
 );
 

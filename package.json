@@ -16,8 +16,10 @@
     "@types/react": "^18.0.18",
     "@types/react-dom": "^18.0.6",
     "@types/redux-logger": "^3.0.9",
+    "@zjseer/browser-tracer": "^1.0.0",
     "@zjseer/qiniu-oss": "^1.0.5",
     "antd": "^4.23.0",
+    "antd-mobile": "^5.28.0",
     "axios": "^0.27.2",
     "babel-jest": "^27.4.2",
     "babel-loader": "^8.2.3",
@@ -81,7 +83,8 @@
   "scripts": {
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
-    "test": "node scripts/test.js"
+    "test": "node scripts/test.js",
+    "analyze": "cross-env ANALYZE=1 node scripts/build.js"
   },
   "eslintConfig": {
     "extends": [
